@@ -11,6 +11,10 @@
 <body>
     <div id="app">
         <h2 v-text="msg1"></h2>
+        <h2 v-text="cmsg"></h2>
+        <form>
+            <input type="text" name="x" v-model="msg2"/>
+        </form>
     </div>
     <!-- 1.引包 -->
     <script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
@@ -21,22 +25,22 @@
         var vm = new Vue({
             el: '#app', //目的地
             data: {
-                msg1: '这是一个消息',
-                msg2: '这是第二个消息'
+                msg1: 'msg1',
+                msg2: 'msg2'
             },
             methods: {
 
             },
 
             watch: {
-                msg: function (newval, oldval) {
+                msg2: function (newval, oldval) {
                     console.log("newval is:" + newval);
                     console.log("oldval is:" + oldval); 
                 }
             },
             computed: {
                 cmsg: function () {
-                    return "computed-----" + this.msg;
+                    return "cmsg" + this.msg1;
                 }
             },
             template: ''
