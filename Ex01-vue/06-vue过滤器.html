@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <input type="text" v-model="msg" />
+        <!-- 使用myCurrent过滤器 -->
+        <h3>{{msg | myReverse("我是临时参数")}}</h3>
+    </div>
+    <script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="./Js/test-component.js"></script>
+    <script type="text/javascript">
+        /**
+         * 1,用 Vue.filter()声明全局过滤器，参数一：过滤器名字  参数二：过滤器方法
+         * 2，{{数据 | 过滤器名字}}
+         */
+
+         Vue.filter("myReverse", function (value,arg) {
+             //将字符串进行反转
+             return value.split('').reverse().join("")+"------"+arg;
+         })
+        var vm = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    msg:''
+                }
+            },
+            template: ''
+        });
+    </script>
+</body>
+
+</html>

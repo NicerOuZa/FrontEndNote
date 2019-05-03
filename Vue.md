@@ -271,3 +271,336 @@ v-show 和 v-if用法基本一样
         });
 ```
 
+ ### 2，全局组件的使用
+
+```javascript
+//第一个参数是组件的名字，第二个参数是组件对象
+Vue.component('button-counter', {
+    data: function () {
+        return {
+            count: 0
+        };
+    },
+    template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+});
+```
+
+### 3，组件之间通信
+
+**父组件向子组件传值**
+
+```javascript
+// 1,先给父组件中绑定自定义的属性
+// 2,在子组件中使用props接收父组件的数据
+// 3,可以在子组件中任意使用
+Vue.component("Child",{
+    props:["childData"],
+    template: "<div>我是子组件---{{childData}}</div>"
+});
+
+Vue.component("Parent",{
+    data:function () {
+        return {
+            msg:'这是父组件的数据'
+        };
+    },
+    template: "<div>我是父组件<Child :childData='msg'/></div>"
+});
+```
+
+**子组件向父组件传值**
+
+```javascript
+// 1,在父组件中绑定自定义的事件
+// 2,在子组件中 触发原生的事件 在函数中使用$emit触发自定义的childHandler
+// 3,把想要传递的值放到$emit的第二个参数中，父组件中的事件函数的第一个参数用来接收传递过来的值
+Vue.component("Child", {
+    template: "<div @click='clickHandler'>我是子组件---{{childData}}</div>",
+    props: ["childData"],
+    data: function () {
+        return {
+            chileMsg: "这是子控件的消息"
+        };
+    },
+    methods: {
+        clickHandler: function () {
+            //$emit()  参数一：自定义的事件名，参数二：传递的消息
+            this.$emit("childHandler",this.chileMsg);
+        }
+    },
+});
+
+Vue.component("Parent", {
+    template: "<div>我是父组件---{{msgFromChile}}<Child :childData='msg' @childHandler='childHandler'/></div>",
+    data: function () {
+        return {
+            msg: '这是父组件的数据',
+            msgFromChile:""
+        };
+    },
+    methods: {
+        childHandler: function (val) {
+            this.msgFromChile = val;
+        }
+    }
+});
+```
+
+### 4，插槽（slot）的使用
+
+**插槽（slot） 是vue的一个内置的全局组件， 作为承载分发内容的出口**
+
+```javascript
+<div id="app">
+        <div>
+            <!--使用插槽可以直接在代码块中传值 -->
+            <Vbtn type="success">登录</Vbtn>
+            <!-- 没有传值的话将会使用slot中的默认值 -->
+            <Vbtn type="primary"></Vbtn>
+        </div>
+    </div>
+
+
+
+    <script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="./Js/test-component.js"></script>
+    <script type="text/javascript">
+        Vue.component("Vbtn", {
+            template: "<button class='default' :class='type'><slot>自定义按钮</slot></button>",
+            props: ["type", "val"]
+        });
+
+        var vm = new Vue({
+            el: '#app',
+            data() {
+                return {}
+            },
+            //父组件可以直接调用子组件
+            template: ''
+        });
+    </script>
+    
+```
+
+**具名插槽的使用**
+
+```html
+ <!-- 用slot标签来指定插槽的名字,名字指定的是谁就插到那个插槽上 -->
+    <div id="app">
+        <ul>
+            <Myli>
+                <h2 slot="two">我是第一个slot</h2>
+                <h3 slot="three">我是第二个slot</h3>
+            </Myli>
+        </ul>
+    </div>
+
+    <script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="./Js/test-component.js"></script>
+    <script type="text/javascript">
+        Vue.component("Myli",{
+            // 有多个插槽时，可以给插槽设置name属性
+            template: "<li><slot name='two'></slot><slot name='three'></slot></li>"
+        });
+        var vm = new Vue({
+            el: '#app',
+            data() {
+                return {}
+            },
+            //父组件可以直接调用子组件
+            template: ''
+        });
+    </script>
+```
+
+# 四，过滤器（filter）
+
+ <h3>过滤器作用：为页面中的数据进行添油加醋的功能</h3>
+
+### 1，局部过滤器的使用
+
+```html
+<div id="app">
+        <input type="text" v-model="price" />
+        <!-- 使用myCurrent过滤器，price的值将作为第一个参数传递到过滤器方法 -->
+        <h3>{{price | myCurrent}}</h3>
+    </div>
+    <script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="./Js/test-component.js"></script>
+    <script type="text/javascript">
+        /**
+         * 1,声明过滤器
+         * 2，{{数据 | 过滤器名字}}
+         */
+        var vm = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    price: 0
+                }
+            },
+            filters: {
+                myCurrent: function (value) {
+                    return "￥" + value;
+                }
+            },
+            template: ''
+        });
+    </script>
+```
+
+### 2，全局过滤器的使用
+
+```html
+<div id="app">
+        <input type="text" v-model="msg" />
+        <!-- 使用myCurrent过滤器 -->
+        <h3>{{msg | myReverse}}</h3>
+        <!-- 可以给过滤器传参，参数传递到过滤器的第二个形参之后，第一个形参被msg占据着 -->
+        <h3>{{msg | myReverse("我是临时参数")}}</h3>
+    </div>
+    <script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="./Js/test-component.js"></script>
+    <script type="text/javascript">
+        /**
+         * 1,用 Vue.filter()声明全局过滤器，参数一：过滤器名字  参数二：过滤器方法
+         * 2，{{数据 | 过滤器名字}}
+         */
+
+         Vue.filter("myReverse", function (value,arg) {
+             //将字符串进行反转
+             return value.split('').reverse().join("")+"----"+arg;
+         })
+        var vm = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    msg:''
+                }
+            },
+            template: ''
+        });
+    </script>
+```
+
+# 五，vue监听器（watch）
+
+<h3>监视属性： 通过vm对象的$watch() 或 watch配置来监听指定的属性，当属性变化时，回调函数自动调用。</h3>
+
+- watch监听的是单个属性
+  - 基本数据类型  简单监视
+  - 复杂数据类型  深度监视
+
+```html
+<div id="app">
+        <input type="text" v-model="msg" />
+        <input type="text" v-model="stus.name" />
+    </div>
+    <script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="./Js/test-component.js"></script>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    msg: '',
+                    stus: {
+                        name: "jack"
+                    }
+                }
+            },
+            watch: {
+                // 这里监听字符串 msg
+                // 当 msg 改变的时候调用监听方法
+                // 监听方法中第一个参数是改变后的值（新值），第二个参数是改变前的值（旧值）
+                msg: function (newV, oldV) {
+                    console.log(newV);
+                    console.log(oldV);
+                },
+
+                /**
+                 * stus是一般对象时，是监听不了的  
+                 *      字符串改变时，地址是跟着变化的，所以能监听
+                 *      监听器监听的是对象的地址变化，改变对象的中的属性时，对象的的地址是没有变化的，从而不能监听
+                 */
+                stus: function () {
+                    console.log("stus改变了？");
+                },
+
+                // 监听复杂数据类型（object，array等）  要用到深度监视
+                stus:{
+                    deep:true, //深度监视
+                    handler:function(newV,oldV){
+                        console.log(newV.name);
+                        console.log(oldV.name);
+                    }
+                }
+            },
+            template: ''
+        });
+    </script>
+```
+
+#  六，计算属性
+
+- 计算属性：computed
+
+- - 在computed属性对象中定义计算属性的方法，在页面中使用 方法名 来显示计算结果
+
+  - 通过  getter/setter  实现对属性数据的显示和监视，计算属性存在缓存，多次读取指执行一次getter计算。
+
+  - 使用set时，要传入形参value
+
+  - - value就是set所监视对象的最新属性值
+
+```html
+ <div id="app">
+        <input type="text" v-model="firstName" />
+        <input type="text" v-model="lastName" />
+        <input type="text" v-model="fullName" />
+    </div>
+    <script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="./Js/test-component.js"></script>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    firstName: '',
+                    lastName: ''
+                }
+            },
+            computed: {
+                fullName: {
+                    get: function () {
+                        return this.firstName + " " + this.lastName;
+                    },
+                    set: function (value) {
+                        var strs = value.split(" ");
+                        this.firstName = strs[0];
+                        this.lastName = strs[1];
+                    }
+                },
+                //计算属性默认只有getter
+                test: function(){
+                    return this.firstName + " " + this.lastName;
+                }
+            },
+            template: ''
+        });
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
