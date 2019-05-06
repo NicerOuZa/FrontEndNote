@@ -413,6 +413,115 @@ Vue.component("Parent", {
     </script>
 ```
 
+
+
+### 5，组件的生命周期
+
+```html
+<div id="app">
+        <!-- vue内置组件 keep-alive  -->
+        <!-- 能在组件切换（可以是创建和销毁）过程中将组件的状态保存在内存中，防止重复渲染DOM -->
+        <keep-alive>
+                <Test v-if="isTrue"></Test>
+        </keep-alive>
+        <button @click="destroyDOM">destroy</button>
+    </div>
+
+    <script src="./node_modules/vue/dist/vue.js"></script>
+    <script>
+        /*
+        生命周期方法：
+            beforeCreate
+            created
+            beforeMount
+            mounted
+            beforeUpdate
+            updated
+            activated
+            deactivated
+            beforeDestroy
+            destroyed
+            errorCaptured
+         */
+        Vue.component("Test", {
+            template: "<div><div>{{msg}}</div><button @click='changeHandler'>改变</button></div>",
+            data() {
+                return {
+                    msg: "hello world"
+                }
+            },
+            methods: {
+                changeHandler: function () {
+                    this.msg = this.msg + "hhh";
+                }
+            },
+            // 组件创建之前
+            beforeCreate() {
+                console.log(this.msg);
+            },
+
+            // 组件创建之后
+            /* 
+                在created方法中可以操作后端数据
+                应用：发起 ajax 请求    
+            */
+            created() {
+                console.log(this.msg);
+            },
+
+            // 在挂载数据到dom之前
+            beforeMount() {
+                console.log(document.getElementById("app"));
+            },
+
+            // 在挂载数据到dom之后
+            mounted() {
+                console.log(document.getElementById("app"));
+            },
+            // 更新DOM之前,  应用：可以获取原始的DOM
+            beforeUpdate() {
+                console.log(document.getElementById("app").innerHTML);
+            },
+            // 更新DOM之后,  应用：可以最新的DOM
+            updated() {
+                console.log(document.getElementById("app").innerHTML);
+            },
+            // 组件销毁前调用 （有 keep-alive时不会被调用）
+            // keep-alive 会把组件状态保存并没有将组件真正销毁，所以不会调用此方法
+            beforeDestroy() {
+                console.log("beforeDestroy");
+            },
+            // 组件销毁后调用 （有 keep-alive时不会被调用）
+            destroyed() {
+                console.log("destroyed");
+            },
+            // 组件被激活调用（配合 keep-alive）
+            activated() {
+                console.log("组件被激活了");
+            },
+             // 组件被停用调用（配合 keep-alive）
+            deactivated() {
+                console.log("组件被停用了");
+            },
+        });
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    isTrue:true 
+                }
+            },
+            methods: {
+                destroyDOM: function () {
+                    this.isTrue = !this.isTrue;
+                }
+            },
+        });
+    </script>
+```
+
+
+
 # 四，过滤器（filter）
 
  <h3>过滤器作用：为页面中的数据进行添油加醋的功能</h3>

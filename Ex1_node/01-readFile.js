@@ -10,7 +10,7 @@ fs.readFile('test.txt',function(error,data) {
         console.log("读取文件失败！");
         console.log(error);
     }else{
-        console.log("读取文件信息成功！")
+        console.log("读取文件信息成功！");
         console.log(data.toString());
     }
 });

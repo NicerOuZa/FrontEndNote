@@ -6,6 +6,8 @@ var product = [{
     name: '菠萝 x',
     price: 6000
 }];
+
+
 var http = require("http");
 var server = http.createServer();
 server.on("request", function (request, response) {

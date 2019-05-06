@@ -2,6 +2,62 @@
 
 # 二，基本的JS的API
 
+### 模块化编程
+
+```javascript
+/**
+ * require的作用就是加载模块
+ *  在node中模块有三种
+ *      具名的核心模块，如fs,http
+ *      用户自己编写的文件模块（就是写的js文件）
+ */
+// 这样就可以执行 Test.js 文件中的代码了（.js后缀可以省略）
+require("./Test.js");
+```
+
++ 模块作用域：
+
+  + node没有全局作用域，node中一个文件就是一个作用域（即文件作用域），一个文件不能直接调用另一个文件中的变量和方法
+  + 默认模块与模块之间是封闭的
+
++ 模块之间的通信：
+
+  + ```javascript
+    /**
+     * require 方法有两个作用
+   *      1，就是加载文件并执行里面的代码
+     *      2，拿到被加载文件模块导出的接口对象（即require的返回值是对应文件模块的exports对象）
+     * 每一个文件模块都提供了一个对象exports
+     *      exports默认是一个空对象
+     *      在exports中传入值就可以实现文件模块之间的通信
+     */
+    var ret = require("./Test.js")
+    console.log(ret);
+    ----------------------------------Test.js中的内容----------------------------------
+    console.log("test被加载了");
+    exports.foot = 1;
+    ```
+  
+  
+
+
+
+
+
+### 核心模块
+
+Node为 JavaScript 提供了很多的服务器级别的API，这些API绝大多数都被封装到了一个具名核心模块中
+例如文件操作的  `fs` 核心模块，http服务构建的`http`模块，`path`路径操作模块，`os`操作系统信息木块······
+
+*核心模块都用require获取*
+
+```javascript
+var fs = require("fs")
+var http = require("http")
+```
+
+
+
 ### 1，读写文件的api
 
 ```javascript
