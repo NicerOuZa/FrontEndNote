@@ -7,6 +7,8 @@
  *      在exports中传入值就可以实现文件模块之间的通信
  */
 var ret = require("./Test.js");
-console.log(ret);
 
- 
+function asd(params) {
+    var a = 1;
+}
+console.log(ret);
