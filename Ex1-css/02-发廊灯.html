@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>演示案例</title>
+    <style>
+        .wrap {
+            width: 40px;
+            height: 300px;
+            border: 1px solid;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .wrap>.inner {
+            height: 600px;
+            background: repeating-linear-gradient(45deg, black 0px, black 10px, white 10px, white 20px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="inner"></div>
+    </div>
+    <button id="btn1">按钮</button>
+
+    <script>
+        var inner = document.querySelector(".wrap>.inner");
+        var btn1 = document.querySelector("#btn1");
+        var flag = 0;
+
+        var interval = null;
+
+        inner.onmouseover = function () {
+            interval = setInterval(function () {
+                flag++;
+                if (flag == 300) {
+                    flag = 0;
+                }
+                inner.style.marginTop = -flag + "px";
+            }, 10);
+        }
+        inner.onmouseout = function () {
+            clearInterval(interval);
+        }
+    </script>
+</body>
+
+</html>

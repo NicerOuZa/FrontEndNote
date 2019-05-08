@@ -8,7 +8,18 @@
  */
 var ret = require("./Test.js");
 
-function asd(params) {
-    var a = 1;
-}
-console.log(ret);
+var http = require("http");
+var server = http.createServer();
+server.on("request", function (request, response) {
+    response.writeHead(200, {
+        'Content-Type': 'text/html;charset=utf-8'
+    }); //设置response编码为utf-8
+    
+    console.log(request.socket.remotePort);
+    response.end("login page");
+});
+
+server.listen(3000, function () {
+    console.log("服务器启动成功！");
+    console.log("端口号：" + 3000);
+});
