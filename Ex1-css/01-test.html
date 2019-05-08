@@ -11,26 +11,26 @@
             width: 100px;
             height: 100px;
             background-color: red;
-            
-        }
-
-        #box2 {
-            width: 100px;
-            height: 100px;
-            background-color: green;
-            position: absolute;
+            /*  */
+            transition: 2s;
         }
     </style>
 </head>
 
 <body>
     <div id="box1"></div>
-    <div id="box2"></div>
     <script>
         var testNode = document.querySelector("#box1");
-        testNode.addEventListener("transitionend",function () {
-            console.log("过渡完成");
-        });
+        testNode.style.width = "300px";
+    </script>
+    <script>
+        window.onload = function () {
+            // 将代码放入 onload 中是有效的。
+            // onload 就是等待页面渲染完成才触发的
+            var testNode = document.querySelector("#box1");
+            testNode.style.width = "300px";
+            
+        }
     </script>
 </body>
 
