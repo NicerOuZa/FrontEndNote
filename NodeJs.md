@@ -25,19 +25,18 @@ require("./Test.js");
   + ```javascript
     /**
      * require 方法有两个作用
-   *      1，就是加载文件并执行里面的代码
+     *      1，就是加载文件并执行里面的代码
      *      2，拿到被加载文件模块导出的接口对象（即require的返回值是对应文件模块的exports对象）
      * 每一个文件模块都提供了一个对象exports
      *      exports默认是一个空对象
      *      在exports中传入值就可以实现文件模块之间的通信
      */
-    var ret = require("./Test.js")
-    console.log(ret);
-    ----------------------------------Test.js中的内容----------------------------------
-    console.log("test被加载了");
-    exports.foot = 1;
+      var ret = require("./Test.js")
+      console.log(ret);
+      ----------------------------------Test.js中的内容----------------------------------
+      console.log("test被加载了");
+      exports.foot = 1;
     ```
-  
   
 
 
@@ -159,5 +158,22 @@ server.listen(3000,function () {
      console.log("服务器启动成功！");
      console.log("端口号：3000");
  });
+```
+
+4，设置响应编码是utf-8   
+
+[查询对应文件类型的Content-Type](http://tool.oschina.net/commons)
+
+```javascript
+server.on("request", function (request, response) {
+    //设置response编码为utf-8
+    // 	Content-type 指定渲染文本的方式和编码格式
+    // 			text/html 会渲染成html文本   text/plain 会渲染成普通文本   image/jpeg 图片格式  ···
+    response.writeHead(200, {
+        'Content-Type': 'text/html;charset=utf-8'
+    }); 
+    
+    response.end("你好世界");
+});
 ```
 
