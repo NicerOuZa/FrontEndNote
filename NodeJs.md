@@ -160,7 +160,7 @@ server.listen(3000,function () {
  });
 ```
 
-4，设置响应编码是utf-8   
+### 4，设置响应数据的Content-Type和编码格式   
 
 [查询对应文件类型的Content-Type](http://tool.oschina.net/commons)
 
@@ -174,6 +174,14 @@ server.on("request", function (request, response) {
     }); 
     
     response.end("你好世界");
+});
+----------------------------------------------------------------
+// 比如发送图片前，可以指定Content-Type为image/jpeg
+response.writeHead(200, {
+    'Content-Type': 'image/jpeg'
+});
+fs.readFile("./resource/main.png", function (error, data) {
+    response.end(data);
 });
 ```
 
