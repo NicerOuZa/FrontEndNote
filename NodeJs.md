@@ -77,7 +77,7 @@ fs.readFile('test.txt',function(error,data) {
         console.log(data.toString());
     }
 });
-
+-----------------------------------------------------------------
 //写文件
 var fs = require('fs');
 /**
@@ -95,6 +95,10 @@ fs.writeFile("test>.txt","我是node.js",function (error) {
     }
 });
 
+
+---------------------------------------------------------------
+    //读取文件夹
+    
 ```
 
 ### 2，最简单的http服务
