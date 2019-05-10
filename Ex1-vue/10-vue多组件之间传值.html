@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="app">
+        <A :aStr='父传子信息'></A>
+    </div>
+
+
+    <script src="./node_modules/vue/dist/vue.js"></script>
+    <script>
+        Vue.component("C", {
+            template: `<div>我在C中接收到：{{$attrs.aStr}}</div>`,
+        })
+        Vue.component("B", {
+            template: `<C v-bind="$attrs"></C>`,
+        })
+
+        Vue.component("A", {
+            template: `<B v-bind="$attrs"></B>`,
+            data() {
+                return {
+                    msg: "hello world"
+                }
+            },
+            props: ["aStr"]
+
+        })
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    isTrue: true
+                }
+            },
+            methods: {
+                destroyDOM: function () {
+                    this.isTrue = !this.isTrue;
+                }
+            },
+        });
+    </script>
+</body>
+
+</html>
