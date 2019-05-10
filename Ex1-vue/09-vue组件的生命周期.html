@@ -14,7 +14,7 @@
         <!-- vue内置组件 keep-alive  -->
         <!-- 能在组件切换（可以是创建和销毁）过程中将组件的状态保存在内存中，防止重复渲染DOM -->
         <keep-alive>
-                <Test v-if="isTrue"></Test>
+            <Test v-if="isTrue"></Test>
         </keep-alive>
         <button @click="destroyDOM">destroy</button>
     </div>
@@ -35,6 +35,7 @@
             destroyed
             errorCaptured
          */
+
         Vue.component("Test", {
             template: "<div><div>{{msg}}</div><button @click='changeHandler'>改变</button></div>",
             data() {
@@ -44,7 +45,7 @@
             },
             methods: {
                 changeHandler: function () {
-                    this.msg = this.msg + "hhh";
+                    this.msg = this.msg + "hhh"
                 }
             },
             // 组件创建之前
@@ -91,7 +92,7 @@
             activated() {
                 console.log("组件被激活了");
             },
-             // 组件被停用调用（配合 keep-alive）
+            // 组件被停用调用（配合 keep-alive）
             deactivated() {
                 console.log("组件被停用了");
             },
@@ -100,7 +101,7 @@
             el: "#app",
             data() {
                 return {
-                    isTrue:true 
+                    isTrue: true
                 }
             },
             methods: {
