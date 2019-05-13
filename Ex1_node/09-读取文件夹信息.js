@@ -10,10 +10,10 @@ server.on("request", function (request, response) {
             return response.end("errorMsg: " + error)
         }
 
-        
+
         var name = "zhangtap"
         console.log(`我是${name}`)
-        response.end("dir: "+files.toString)
+        response.end("dir: " + files.toString)
     })
 })
 

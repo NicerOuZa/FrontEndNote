@@ -9,7 +9,7 @@
 </head>
 <body>
     <div id="app">
-        <h2 v-text="msg1"></h2>
+        <h2 v-text="msg1" @click="clickHandler($event)"></h2>
     </div>
     <!-- 1.引包 -->
     <script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
@@ -36,6 +36,13 @@
             computed: {
                 cmsg: function () {
                     return "computed-----" + this.msg;
+                }
+            },
+            methods: {
+                clickHandler:function(ev){
+                    var x=ev.clientX;
+                    var y=ev.clientY;
+                    console.log("X coords: " + x + ", Y coords: " + y);
                 }
             },
             template: ''

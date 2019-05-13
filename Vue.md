@@ -127,7 +127,6 @@ v-show 和 v-if用法基本一样
 ### 4，v-bind的使用
 
 - v-bind   它是vue中，提供的用于绑定属性的指令
-
 - -  <input type="button"       value="按钮" **v-bind:title = "mytitle"**>
 
   - - v-bind后面的mytitle会被解析成变量
@@ -140,6 +139,8 @@ v-show 和 v-if用法基本一样
 
   - - 省略掉v-bind只留  “:” 也是合法的，编译时会自动识别为v-bind
     - 即   "  v-bind:  "         的缩写为   " : "
+- vue中的事件通过传入`$event`来获得event对象
+  - `<h2 v-text="msg1" @click="clickHandler($event)"></h2>`
 
 ### 5，css绑定渲染
 
@@ -345,6 +346,136 @@ Vue.component("Parent", {
     }
 });
 ```
+
+**使用`$attrs`多重组件之间父组件向后代的后代组件传值**
+
+```js
+// 利用 $attrs 对象在多个组件之间通信
+// 	  $attrs 对象会存储父组件传递过来的所有值
+	    Vue.component("C", {
+            template: "<div>{{$attrs.msgC}}</div>"
+        });
+        Vue.component("B", {
+            template: "<C v-bind='$attrs'></C>"
+        });
+
+        Vue.component("A", {
+            template: `<div>
+                            <B v-bind='$attrs' />
+                            <div>{{$attrs.msgA}}</div>
+                        </div>                
+                      `
+        });
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    msga:"给A的数据",
+                    msgc:"给B的数据"
+                }
+            },
+            template: `<A :msgA='msga' :msgC='msgc'></A>`
+        });
+```
+
+**使用`$listeners`多重组件之间后代的后代组件向父组件传值**
+
+```javascript
+// 利用 $listeners 把注册最开始注册的@click='cClickHandler'向下传递
+Vue.component("C", {
+            template: "<div @click='cClickHandler'>我是C</div>",
+            methods: {
+                cClickHandler: function () {
+                    this.$emit("cHandler", "我是c中的数据")
+                }
+            },
+        });
+        Vue.component("B", {
+            template: "<C v-on='$listeners'></C>"
+        });
+
+        Vue.component("A", {
+            template: "<B v-on='$listeners'/>"
+        });
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    msga: "给A的数据",
+                    msgc: "给B的数据"
+                }
+            },
+            methods: {
+                getCData: function (val) {
+                    alert(val)
+                }
+            },
+            template: `<A @cHandler='getCData'></A>`
+        });
+```
+
+**中央事件总线**
+
+```javascript
+// 创建一个Vue对象作为中央事件总线
+        var bus = new Vue()
+
+        Vue.component("A", {
+            template: `<div>
+                           <div>我是A</div>
+                           <input type='text' v-model='msg' @input='passData(msg)' />
+                       </div>`,
+            data() {
+                return {
+                    msg: '',
+                    msgFromB: ''
+                }
+            },
+            methods: {
+                passData: function (val) {
+                    // 当有输入操作时触发 B 中给bus设置的自定义事件
+                    bus.$emit('globalEvent', val)
+                }
+            },
+        })
+        Vue.component("B", {
+            template: `<div>
+                            <div>我是B</div>
+                            <div>{{msgFromA}}</div>
+                       </div>`,
+
+            data() {
+                return {
+                    msgFromA: ''
+                }
+            },
+
+            created() {
+                // B创建后给bus注 册自定义事件
+                bus.$on("globalEvent", (val) => {
+                    this.msgFromA = val
+                })
+            },
+        });
+
+
+        var vm = new Vue({
+            el: "#app",
+
+            template: `<div>
+                            <A></A>
+                            <B></B>
+                       </div>
+            
+                       `
+        });
+```
+
+**通过provider来进行通信**
+
+> 父组件中通过 provider 来提供变量，然后在子组件中通过 inject来注入变量。不论子组件有多深，只要调用了inject 那么就可以注入 provider 中的数据。而不是局限于只能从当前父组件的 prop 属性来获取数据，只要在父组件的生命周期内，子组件都可以调用
+
+
 
 ### 4，插槽（slot）的使用
 

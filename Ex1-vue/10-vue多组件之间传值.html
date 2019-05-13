@@ -10,42 +10,54 @@
 
 <body>
 
-    <div id="app">
-        <A :aStr='父传子信息'></A>
-    </div>
+    <div id="app"></div>
 
 
     <script src="./node_modules/vue/dist/vue.js"></script>
     <script>
-        Vue.component("C", {
-            template: `<div>我在C中接收到：{{$attrs.aStr}}</div>`,
-        })
-        Vue.component("B", {
-            template: `<C v-bind="$attrs"></C>`,
-        })
+        // Vue.component("C", {
+        //     template: `<div>我在C中接收到：{{$attrs.aStr}}</div>`,
+        // })
+        // Vue.component("B", {
+        //     template: `<C v-bind="$attrs"></C>`,
+        // })
 
-        Vue.component("A", {
-            template: `<B v-bind="$attrs"></B>`,
-            data() {
-                return {
-                    msg: "hello world"
+
+        // 1,先给父组件中绑定自定义的属性
+
+        Vue.component("C", {
+            template: "<div @click='cClickHandler'>我是C</div>",
+            methods: {
+                cClickHandler: function () {
+                    this.$emit("cHandler", "我是c中的数据")
                 }
             },
-            props: ["aStr"]
+        });
+        Vue.component("B", {
+            template: "<C v-on='$listeners'></C>"
+        });
 
-        })
+        Vue.component("A", {
+            template: `<div>
+                            <B v-on='$listeners' />
+                            <div>{{$attrs.msgA}}</div>
+                        </div>                
+                      `
+        });
         var vm = new Vue({
             el: "#app",
             data() {
                 return {
-                    isTrue: true
+                    msga: "给A的数据",
+                    msgc: "给B的数据"
                 }
             },
             methods: {
-                destroyDOM: function () {
-                    this.isTrue = !this.isTrue;
+                getCData: function (val) {
+                    alert(val)
                 }
             },
+            template: `<A @cHandler='getCData'></A>`
         });
     </script>
 </body>
