@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="app"></div>
+
+
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script>
+        Vue.component("B", {
+            // 给标签绑定 ref 属性
+            template: `<div class="subB">
+                            <div ref='box1'>我是B</div>
+                       </div>`,
+        })
+
+
+        Vue.component("A", {
+            // 给标签绑定 ref 属性
+            template: `<div>
+                        <div ref='box1'>我是A</div>
+                        <B   ref='bCom'></B>
+                       </div>`,
+
+            // 获取不到DOM对象
+            created() {
+                console.log(this.$refs.box1);
+            },
+            // 获取不到DOM对象
+            beforeMount() {
+                console.log(this.$refs.box1);
+            },
+            // DOM 对象只能在 mounted 之后的生命周期函数中获取
+            mounted() {
+                // 获取给标签绑定 ref="xxx" 属性，使用 this.$refs.xxx 来获取原生的 DOM 对象
+                console.log(this.$refs.box1);
+                // 如果给组件绑定 ref 属性，那么this.$refs.xxx获取的是当前组件的对象（不是原生DOM对象）
+                console.log(this.$refs.bCom);
+            },
+        })
+
+        var vm = new Vue({
+            el: "#app",
+
+            data() {
+                return {
+                    msg: "",
+                    msgFromA: (() => {
+                        return "asdsad"
+                    })()
+                }
+            },
+            template: `<div>
+                            <A></A>
+                       </div>
+                    `,
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="app"></div>
+
+
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script>
+        Vue.component("A", {
+            template: `<div>
+                           <div>我是A</div>
+                           <input type='text' v-model='msg' @input='changeParentMsg' />
+                       </div>`,
+            data() {
+                return {
+                    msg: '',
+                    msg_A: '我是A组件'
+                }
+            },
+            methods: {
+                changeParentMsg: function () {
+                    this.$parent.msg = this.msg
+                }
+            },
+
+
+        })
+        var vm = new Vue({
+            el: "#app",
+
+            template: `<div>
+                            <div>msg：{{msg}}</div>
+                            <div @click='childMsgHandler'>msgFromA：{{msgFromA}}</div>
+                            <A></A>
+                        </div>
+                    `,
+
+            data() {
+                return {
+                    msg: "",
+                    msgFromA: (() => {
+                        return "asdsad"
+                    })()
+                }
+            },
+            methods: {
+                childMsgHandler: function () {
+                    console.log(this.$children[0].msg_A);
+                    this.msgFromA = this.$children[0].msg_A
+                }
+            },
+
+        });
+    </script>
+</body>
+
+</html>

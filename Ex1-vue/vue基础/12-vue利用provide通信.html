@@ -13,10 +13,9 @@
     <div id="app"></div>
 
 
-    <script src="./node_modules/vue/dist/vue.js"></script>
+    <script src="../node_modules/vue/dist/vue.js"></script>
     <script>
-        // 创建一个Vue对象作为中央事件总线
-        var bus = new Vue()
+
 
         Vue.component("A", {
             template: `<div>
@@ -29,42 +28,34 @@
                     msgFromB: ''
                 }
             },
-            methods: {
-                passData: function (val) {
-                    // 当有输入操作时触发 B 中给bus设置的自定义事件
-                    bus.$emit('globalEvent', val)
-                }
-            },
+        
         })
         Vue.component("B", {
             template: `<div>
                             <div>我是B</div>
-                            <div>{{msgFromA}}</div>
+                            <div>{{msg}}</div>
                        </div>`,
-
             data() {
                 return {
-                    msgFromA: ''
+                    msg: ''
                 }
             },
+            inject:["toChild"],
 
             created() {
-                // B创建后给bus注册自定义事件
-                bus.$on("globalEvent", (val) => {
-                    this.msgFromA = val
-                })
+                this.msg = this.toChild
             },
         });
 
 
         var vm = new Vue({
             el: "#app",
-
+            provide:{
+                toChild:"给子组件的信息"
+            },
             template: `<div>
-                            <A></A>
                             <B></B>
                        </div>
-            
                        `
         });
     </script>

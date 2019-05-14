@@ -332,7 +332,9 @@ Vue.component("Child", {
 });
 
 Vue.component("Parent", {
-    template: "<div>我是父组件---{{msgFromChile}}<Child :childData='msg' @childHandler='childHandler'/></div>",
+    template: `<div>我是父组件---{{msgFromChile}}
+				<Child :childData='msg' @childHandler='childHandler'/>
+			  </div>`,
     data: function () {
         return {
             msg: '这是父组件的数据',
@@ -473,7 +475,79 @@ Vue.component("C", {
 
 **通过provider来进行通信**
 
-> 父组件中通过 provider 来提供变量，然后在子组件中通过 inject来注入变量。不论子组件有多深，只要调用了inject 那么就可以注入 provider 中的数据。而不是局限于只能从当前父组件的 prop 属性来获取数据，只要在父组件的生命周期内，子组件都可以调用
+> 父组件中通过 provide 来提供变量，然后在子组件中通过 inject来注入变量。不论子组件有多深，只要调用了inject 那么就可以注入 provider 中的数据。而不是局限于只能从当前父组件的 prop 属性来获取数据，只要在父组件的生命周期内，子组件都可以调用
+
+```javascript
+Vue.component("B", {
+            template: `<div>
+                            <div>我是B</div>
+                            <div>{{msg}}</div>
+                       </div>`,
+            data() {
+                return {
+                    msg: ''
+                }
+            },
+            inject:["toChild"],
+
+            created() {
+                this.msg = this.toChild
+            },
+        });
+
+
+        var vm = new Vue({
+            el: "#app",
+            provide:{
+                toChild:"给子组件的信息"
+            },
+            template: `<div>
+                            <B></B>
+                       </div>
+                       `
+        });
+```
+
+**通过`$parent`进行子组件向父组件通信**
+
+```javascript
+Vue.component("A", {
+            template: `<div>
+                           <div>我是A</div>
+                           <input type='text' v-model='msg' @input='changeParentMsg' />
+                       </div>`,
+            data() {
+                return {
+                    msg: '',
+                }
+            },
+            methods: {
+                changeParentMsg:function(){
+                    // 子组件通过调用 $parent 可以直接拿到父组件 data 中的数据
+                    this.$parent.msg = this.msg
+                }
+            },
+            
+
+        })
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    msg:""
+                }
+            },
+            template: `<div>
+                            <div>我是父组件：{{msg}}</div>
+                            <A></A>
+                       </div>
+                       `
+        });
+```
+
+
+
+
 
 
 
@@ -832,9 +906,115 @@ Vue.component("C", {
 
 
 
+# 七，vue
+
+### 1，vue获取原生`DOM`对象的方法
+
+```javascript
+	Vue.component("B", {
+            template: `<div class="subB">
+                            <div>我是B</div>
+                       </div>`,
+        })
+
+
+        Vue.component("A", {
+            // 给标签绑定 ref 属性
+            template: `<div>
+                        <div ref='box1'>我是A</div>
+                        <B   ref='bCom'></B>
+                       </div>`,
+
+            // 获取不到DOM对象
+            created() {
+                console.log(this.$refs.box1);
+            },
+            // 获取不到DOM对象
+            beforeMount() {
+                console.log(this.$refs.box1);
+            },
+            // DOM 对象只能在 mounted 之后的生命周期函数中获取
+            mounted() {
+                // 获取给标签绑定 ref="xxx" 属性，使用 this.$refs.xxx 来获取原生的 DOM 对象
+                console.log(this.$refs.box1);
+                // 如果给组件绑定 ref 属性，那么this.$refs.xxx获取的是当前组件的对象（不是原生DOM对象）
+                console.log(this.$refs.bCom);
+            },
+        })
+
+        var vm = new Vue({
+            el: "#app",
+
+            data() {
+                return {
+                    msg: "",
+                    msgFromA: (() => {
+                        return "asdsad"
+                    })()
+                }
+            },
+            template: `<div>
+                            <A></A>
+                       </div>
+                    `,
+        });
+```
+
+### 2, 给DOM添加事件的特殊情况
+
+```javascript
+Vue.component("A", {
+            // 给标签绑定 ref 属性
+            template: `<div>
+                        <div ref='box1'>我是A</div>
+                        <input type='text' v-show='isShow' ref='tInput'/>
+                       </div>`,
+            data() {
+                return {
+                    isShow:false
+                }
+            },
+            mounted() {
+                this.isShow = true
+                /**
+                 * 注意这里获取的直接使用 tInput 对象不是更新完数据（上面this.isShow更新为true）的 tInput对象
+                 *     因为此时还在mounted函数内，数据更新后的生命周期函数还没被调用
+                 */
+                this.$refs.tInput.focus()
+
+
+                /**
+                 * $nextTick() 是在DOM更新循环之后执行的回调函数，
+                 *   在修改数据之后向 $nextTick() 传入回调函数，并在回调函数中获取更新之后的DOM
+                 */
+                this.$nextTick(function(){
+                    console.log(this);
+                    this.$refs.tInput.focus()
+                })
+            },
+        })
+
+        var vm = new Vue({
+            el: "#app",
+
+            data() {
+                return {
+                    msg: "",
+                    msgFromA: (() => {
+                        return "asdsad"
+                    })()
+                }
+            },
+            template: `<div>
+                            <A></A>
+                       </div>
+                    `,
+        });
+```
 
 
 
+ 
 
 
 
