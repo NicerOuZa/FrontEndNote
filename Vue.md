@@ -906,7 +906,7 @@ Vue.component("A", {
 
 
 
-# 七，vue
+# 七，Vue 操作 DOM
 
 ### 1，vue获取原生`DOM`对象的方法
 
@@ -1014,13 +1014,141 @@ Vue.component("A", {
 
 
 
- 
+#  八，Vue 路由 （Vue-Router）
+
+**[什么是路由](https://www.cnblogs.com/yuqing6/p/6731980.html)**
+
+> 路由实现：
+>
+> > （1），传统开发方式 url 改变后，立即发生请求响应整个页面，可能出现资源过多，让页面出现白屏
+> >
+> > （2），SPA （Single Page Application） 单页面应用
+> > 		    		锚点值改变后不会立即发送请求，而是在某个合适的时机发送(Ajax)请求，页面局部渲染
+> >					优点：页面不立即跳转，用户体验好
+> > ​					
 
 
 
+### 1，原生 js 实现路由
+
+```javascript
+<a href="#/login">登陆</a>
+    <a href="#/register">注册</a>
+    <div id="app"></div>
+    <script>
+        var app = document.querySelector("#app")
+        window.onhashchange = function () {
+            console.log(location.hash)
+            switch (location.hash) {
+                case "#/login":
+                    app.innerHTML = "<h1>我是登陆界面</h1>"
+                    break;
+                case "#/register":
+                    app.innerHTML = "<h1>我是注册界面</h1>"
+                    break;
+                default:
+                    break;
+            }
+        }
+    </script>
+```
 
 
 
+### 2，vue 路由的基本使用
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- 1,引入 vue 模块 -->
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <!-- 2,引入 vue-router模块 -->
+    <script src="../node_modules/vue-router/dist/vue-router.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app"></div>
+    <script>
+        // 3,让 Vue 使用该 vue-router 模块
+        //      这个在页面中可写可不写，默认页面是已经引入的
+        Vue.use(VueRouter)
 
 
+        var Login = {
+            template:`<div><h1>我是登录界面</h1></div>`
+        }
+        var Register = {
+            template:`<div><h1>我是注册界面</h1></div>`
+        }
+        // 4,创建router对象
+        var myRouter = new VueRouter({
+            // 5,配置路由对象
+            routes:[
+                // 路由匹配的规则
+                {path:"/login",component:Login},
+                {path:"/register",component:Register}
+            ]
+        })
+
+
+        /** 
+           在 vue-router 模块中提供了两个全局组件   router-link 和 router-view
+                router-link：相当于 a 标签，其中的 to 属性相当于 href，
+                    即 <a href=''></a> 相当于 <router-link to=''></router-link>
+                router-view: 路由匹配的组件的出口，路由匹配到的组件将渲染在这里
+         */
+        var App = {
+            template:`
+                        <div>
+                            <router-link to='/login'>登陆页面</router-link>
+                            <router-link to='/register'>注册页面</router-link>
+                            <router-view></router-view>
+                        </div>
+                    `,
+        }
+        var vm = new Vue({
+            el: "#app",
+            components: {
+                App
+            },
+            // 6, 把 vue-router 交给 vue 实例化对象管理
+            router: myRouter,
+            template: `<App></App>`
+        })
+    </script>
+</body>
+
+</html>
+```
+
+### 3，利用路由对象的 name 来使用路由
+
+```javascript
+ var myRouter = new VueRouter({
+     // 5,配置路由对象
+     routes:[
+         // 给路由对象的 name 属性赋值
+         {path:"/login", name:"login",component:Login},
+         {path:"/register",name:"register",component:Register}
+     ]
+ })
+
+ var App = {
+     // 要把 to 属性加上 v-bind 
+     // 	传入含有name属相的对象给  :to 
+     template:`
+            <div>
+            <router-link :to='{name:"login"}'>登陆页面</router-link>
+            <router-link :to='{name:"register"}'>注册页面</router-link>
+            <router-view></router-view>
+            </div>
+			`,
+ }
+```
 
