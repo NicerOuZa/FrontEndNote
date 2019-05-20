@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app"></div>
+
+    <template id="App">
+        <div>
+            <router-link :to='{name:"timeline"}'>首页</router-link>
+            <router-link :to='{name:"pins"}'>沸点</router-link>
+            <!-- 
+                一般情况下，路由切换的时候是伴随的组件的销毁与创建
+                    给组件加上 keep-alive 能在组件切换（可以是创建和销毁）过程中将组件的状态保存在内存中，防止重复渲染DOM
+             -->
+            <keep-alive>
+                <router-view></router-view>
+            </keep-alive>
+        </div>
+    </template>
+
+    <template id="timeline">
+        <div>
+            <b>我是首页</b><br>
+        </div>
+    </template>
+
+    
+    <template id="pins">
+        <div>
+            <b @click="clickHandler">我是沸点</b><br>
+        </div>
+    </template>
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script src="../node_modules/vue-router/dist/vue-router.js"></script>
+    <script>
+        var Timeline = {
+            template: "#timeline",
+        }
+
+        var Pins = {
+            template: "#pins",
+            methods: {
+                clickHandler:function(e){
+                    e.target.style.color = "red";
+                }
+            },
+        }
+        var myRouter = new VueRouter({
+
+            routes: [
+
+                {
+                    path: "/timeline",
+                    name: "timeline",
+                    component: Timeline,
+                },
+                {
+                    path: "/pins",
+                    name: "pins",
+                    component: Pins,
+                },
+            ]
+        })
+        var App = {
+            template: "#App",
+        }
+        var vm = new Vue({
+            el: "#app",
+            components: {
+                App
+            },
+            router: myRouter,
+            template: `<App></App>`
+        })
+    </script>
+</body>
+
+</html>

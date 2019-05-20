@@ -9,7 +9,7 @@
 var fs = require("fs")
 var App = {
     template: `<div>
-                    <h1>我是App</h1>
+                    <h1>demo</h1>
                     <div id = "box1"
                     ref = "content"
                     @drop.prevent = "dropFile($event)">{{msg}}</div>   

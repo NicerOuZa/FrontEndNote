@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <div>
+            <router-link to='/home'>主页</router-link>
+            <router-link to='/blog'>我的博客</router-link>
+            <router-view></router-view>
+        </div>
+    </div>
+
+    <template id="home">
+        <div><b>我是首页</b></div>
+    </template>
+
+
+    <template id="blog">
+        <div><b>我的博客</b></div>
+    </template>
+
+    <template id="login">
+        <div>
+            <b>我是登录界面</b>
+            <button @click="loginHandler">登录</button>
+        </div>
+    </template>
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script src="../node_modules/vue-router/dist/vue-router.js"></script>
+    <script>
+        var Home = {
+            template: "#home",
+        }
+
+        var Blog = {
+            template: "#blog",
+        }
+        Login
+        var Login = {
+            template: "#login",
+            methods: {
+                loginHandler: function () {
+                    // 登录后跳转到 博客页面
+                    //      给 localStorage传入user对象
+                    localStorage.setItem("user", {})
+                    // 利用 $router 进行导航 
+                    //      使用$router导航称为编程式导航，相对于使用 router-link 称为声明式导航
+                    //      $router.push$router.push 的使用和 next() 一样
+                    this.$router.push({
+                        name: "blog",
+                        // path:"/login"
+                    })
+                }
+            },
+        }
+        var myRouter = new VueRouter({
+
+            routes: [{
+                    path: "/",
+                    redirect: "/home"
+                },
+
+                {
+                    path: "/home",
+                    name: "home",
+                    component: Home,
+                },
+                {
+                    path: "/blog",
+                    name: "blog",
+                    component: Blog,
+                    // 给未来的路由 做权限控制
+                    meta: {
+                        // 证明用户访问改组件的时候需要登录
+                        auto: true
+                    }
+                },
+                {
+                    path: "/login",
+                    name: "login",
+                    component: Login,
+                },
+            ]
+        })
+        // 给 路由对象 设置全局前置守卫
+        //      给beforeEach 传入的回调函数会在每次路由改变的时候调用
+        //      to，from 分别是 $route 更改后和更改前的对象 
+        myRouter.beforeEach((to, from, next) => {
+            console.log(to)
+            console.log(from)
+
+            if (to.meta.auto) {
+                // 用户点了博客链接，改用户需要登录
+                // 通过给 next 传入有 path 属性的对象来更改当前访问路由对象
+                //      也可以通过命名路由来进行导航 即传入 name 属性
+                if (localStorage.getItem("user")) {
+                    // 有 user 对象直接放行
+                    next()
+                } else {
+                    next({
+                        path: "/login",
+                        // name:"login"
+                    })
+                }
+
+            } else {
+                // 如果为 false 直接放行
+                next()
+            }
+
+        })
+        var vm = new Vue({
+            el: "#app",
+            router: myRouter,
+        })
+    </script>
+</body>
+
+</html>

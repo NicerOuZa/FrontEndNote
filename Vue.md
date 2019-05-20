@@ -1152,3 +1152,445 @@ Vue.component("A", {
  }
 ```
 
+### 4，路由参数
+
+```html
+<div id="app"></div>
+
+     <!-- 1,引入 vue 模块 -->
+     <script src="../node_modules/vue/dist/vue.js"></script>
+     <!-- 2,引入 vue-router模块 -->
+     <script src="../node_modules/vue-router/dist/vue-router.js"></script>
+      <script>
+        //   地址栏上  两种路由范式
+        // （1），xxxx.html#/user/1 params  动态路由参数
+        // （2），oooo.html#/user?userId=1
+          var UserParams = {
+              template: `<div><h1>我是UserParams</h1></div>`
+          }
+          var UserQuery = {
+              template: `<div><h1>我是UserQuery</h1></div>`
+          }
+          // 4,创建router对象
+          var myRouter = new VueRouter({
+              // 5,配置路由对象
+              routes: [
+                  // 路由匹配的规则
+                  {
+                    //   动态路由参数  以冒号开头
+                      path: "/user/:id",
+                      name: "userP",
+                      component: UserParams
+                  },
+                  {
+                      path: "/user",
+                      name: "userQ",
+                      component: UserQuery
+                  }
+              ]
+          })
+          var App = {
+            // 第一种传参  params
+            // 第二种传参  query
+              template: `
+                        <div>
+                            <router-link :to='{name:"userP",params:{id:10}}'>用户1</router-link>
+                            <router-link :to='{name:"userQ",query:{userId:2}}'>用户2</router-link>
+                            <router-view></router-view>
+                        </div>
+                    `,
+          }
+          var vm = new Vue({
+              el: "#app",
+              components: {
+                  App
+              },
+              // 6, 把 vue-router 交给 vue 实例化对象管理
+              router: myRouter,
+              template: `<App></App>`
+          })
+      </script>
+```
+
+### 5，子控件获取路由参数
+
+```js
+var UserParams = {
+    template: `<div><h1>我是UserParams</h1></div>`,
+    created() {
+        // 由于子控件继承父控件
+        // 可以直接通过 this 从子控件中获取到 router 对象和当前的 route 对象
+        console.log(this.$router);
+        console.log(this.$route);
+    },
+}
+var UserQuery = {
+    template: `<div><h1>我是UserQuery</h1></div>`,
+    created() {
+        // 同上
+        console.log(this.$router);
+        console.log(this.$route);
+    },
+}
+```
+
+### 6，嵌套路由
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app"></div>
+
+
+
+    <template id="App">
+        <div>
+            <router-link :to='{name:"home"}'>首页</router-link>
+            <router-view></router-view>
+        </div>
+    </template>
+    <template id="home">
+        <div>
+            <b>我是首页</b><br>
+            <router-link to="/home/song">歌曲</router-link>
+            <router-link to="/home/movie">电影</router-link>
+            <router-link to="/home/game">游戏</router-link>
+            <router-view></router-view>
+        </div>
+    </template>
+    <template id="song">
+        <div>歌曲页面</div>
+    </template>
+    <template id="movie">
+        <div>电影页面</div>
+    </template>
+    <template id="game">
+        <div>游戏页面</div>
+    </template>
+    <!-- 1,引入 vue 模块 -->
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <!-- 2,引入 vue-router模块 -->
+    <script src="../node_modules/vue-router/dist/vue-router.js"></script>
+    <script>
+        var Home = {
+            template: "#home",
+        }
+        var Song = {
+            template: "#song",
+        }
+        var Movie = {
+            template: "#movie",
+        }
+        var Game = {
+            template: "#game",
+        }
+        var myRouter = new VueRouter({ 
+            routes: [
+                {
+                    path: "/home",
+                    name: "home",
+                    component: Home,
+                    // 定义 home 的子集路由
+                    children: [{
+                            path: "song",
+                            component: Song
+                        },
+                        {
+                            path: "movie",
+                            component: Movie
+                        },
+                        {
+                            path: "game",
+                            component: Game
+                        }
+                    ]
+                },
+            ]
+        })
+        var App = {
+            template: "#App",
+        }
+        var vm = new Vue({
+            el: "#app",
+            components: {
+                App
+            },
+            router: myRouter,
+            template: `<App></App>`
+        })
+    </script>
+</body>
+
+</html>
+```
+
+### 7，动态路由匹配
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app"></div>
+
+    <template id="App">
+        <div>
+            <router-link :to='{name:"timeline"}'>首页</router-link>
+            <router-link :to='{name:"pins"}'>沸点</router-link>
+            <router-view></router-view>
+        </div>
+    </template>
+
+    <template id="timeline">
+        <div>
+            <b>我是首页</b><br>
+            <div id="timeline">
+                <!-- 
+                    这里利用 路由参数 进行动态加载
+                        注意：只改变路由参数时，对应的组件不会重新加载（created方法不会重新执行）
+                                即当使用路由参数时，例如从 /user/foo 导航到/user/bar，原来的组件实例会被复用。因为两个路由都渲染同个组件，比起销毁再创建，复用则显得更加高效。不过，这也意味着组件的生命周期钩子不会再被调用。
+                              复用组件时，想对路由参数的变化作出响应的话，你可以简单地 watch (监测变化) $route 对象：
+                 -->
+                <router-link :to="{name:'comDesc',params:{id:'frontend'}}">前端</router-link>
+                <router-link :to="{name:'comDesc',params:{id:'backend'}}">后端</router-link>
+                <router-view></router-view>
+            </div>
+        </div>
+    </template>
+
+    <template id="comDesc">
+        <div>{{msg}}</div>
+    </template>
+   
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script src="../node_modules/vue-router/dist/vue-router.js"></script>
+    <script>
+        var Timeline = {
+            template: "#timeline",
+        }
+        
+        var ComDesc = {
+            template: "#comDesc",
+            data() {
+                return {
+                    msg: "default"
+                }
+            },
+            created() {
+                // 这里在 路由参数 改变后不会重新执行 created 方法
+            },
+            watch: {
+                // 利用 watch (监测变化) $route 对象来达到根据路由参数动态更新数据的目的
+                $route: function (to, from) {
+                    switch (to.params.id) {
+                        case "frontend":
+                            this.msg = "我是前端页面"
+                            break;
+                        case "backend":
+                            this.msg = "我是后端页面"
+                            break;
+                        default:
+                            this.msg = "default"
+                            break;
+                    }
+                }
+            }
+        }
+        var myRouter = new VueRouter({
+
+            routes: [
+
+                {
+                    path: "/timeline",
+                    name: "timeline",
+                    component: Timeline,
+                    children: [{
+                        name: "comDesc",
+                        path: "/timeline/:id",
+                        component: ComDesc
+                    }]
+                }
+            ]
+        })
+        var App = {
+            template: "#App",
+        }
+        var vm = new Vue({
+            el: "#app",
+            components: {
+                App
+            },
+            router: myRouter,
+            template: `<App></App>`
+        })
+    </script>
+</body>
+
+</html>
+```
+
+### 8, keep-alive 的使用
+
+```html
+<div>
+    <router-link :to='{name:"timeline"}'>首页</router-link>
+    <router-link :to='{name:"pins"}'>沸点</router-link>
+    <!-- 
+		一般情况下，路由切换的时候是伴随的组件的销毁与创建
+		给组件加上 keep-alive 能在组件切换（可以是创建和销毁）过程中将组件的状态保存在内存中，防止重复渲染DOM
+	-->
+    <keep-alive>
+        <router-view></router-view>
+    </keep-alive>
+</div>
+```
+
+### 9，路由元信息
+
+​	**利用路由元信息进行权限验证**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <div>
+            <router-link to='/home'>主页</router-link>
+            <router-link to='/blog'>我的博客</router-link>
+            <router-view></router-view>
+        </div>
+    </div>
+
+    <template id="home">
+        <div><b>我是首页</b></div>
+    </template>
+
+
+    <template id="blog">
+        <div><b>我的博客</b></div>
+    </template>
+
+    <template id="login">
+        <div>
+            <b>我是登录界面</b>
+            <button @click="loginHandler">登录</button>
+        </div>
+    </template>
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script src="../node_modules/vue-router/dist/vue-router.js"></script>
+    <script>
+        var Home = {
+            template: "#home",
+        }
+
+        var Blog = {
+            template: "#blog",
+        }
+        Login
+        var Login = {
+            template: "#login",
+            methods: {
+                loginHandler: function () {
+                    // 登录后跳转到 博客页面
+                    //      给 localStorage传入user对象
+                    localStorage.setItem("user", {})
+                    // 利用 $router 进行导航 
+                    //      使用$router导航称为编程式导航，相对于使用 router-link 称为声明式导航
+                    //      $router.push$router.push 的使用和 next() 一样
+                    this.$router.push({
+                        name: "blog",
+                        // path:"/login"
+                    })
+                }
+            },
+        }
+        var myRouter = new VueRouter({
+
+            routes: [{
+                    path: "/",
+                    redirect: "/home"
+                },
+
+                {
+                    path: "/home",
+                    name: "home",
+                    component: Home,
+                },
+                {
+                    path: "/blog",
+                    name: "blog",
+                    component: Blog,
+                    // 给未来的路由 做权限控制
+                    meta: {
+                        // 证明用户访问改组件的时候需要登录
+                        auto: true
+                    }
+                },
+                {
+                    path: "/login",
+                    name: "login",
+                    component: Login,
+                },
+            ]
+        })
+        // 给 路由对象 设置全局前置守卫
+        //      给beforeEach 传入的回调函数会在每次路由改变的时候调用
+        //      to，from 分别是 $route 更改后和更改前的对象 
+        myRouter.beforeEach((to, from, next) => {
+            console.log(to)
+            console.log(from)
+
+            if (to.meta.auto) {
+                // 用户点了博客链接，改用户需要登录
+                // 通过给 next 传入有 path 属性的对象来更改当前访问路由对象
+                //      也可以通过命名路由来进行导航 即传入 name 属性
+                if (localStorage.getItem("user")) {
+                    // 有 user 对象直接放行
+                    next()
+                } else {
+                    next({
+                        path: "/login",
+                        // name:"login"
+                    })
+                }
+
+            } else {
+                // 如果为 false 直接放行
+                next()
+            }
+
+        })
+        var vm = new Vue({
+            el: "#app",
+            router: myRouter,
+        })
+    </script>
+</body>
+
+</html>
+```
+

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app"></div>
+
+
+
+    <template id="App">
+        <div>
+            <router-link :to='{name:"home"}'>首页</router-link>
+            <router-view></router-view>
+        </div>
+    </template>
+    <template id="home">
+        <div>
+            <b>我是首页</b><br>
+            <router-link to="/home/song">歌曲</router-link>
+            <router-link to="/home/movie">电影</router-link>
+            <router-link to="/home/game">游戏</router-link>
+            <router-view></router-view>
+        </div>
+    </template>
+    <template id="song">
+        <div>歌曲页面</div>
+    </template>
+    <template id="movie">
+        <div>电影页面</div>
+    </template>
+    <template id="game">
+        <div>游戏页面</div>
+    </template>
+    <!-- 1,引入 vue 模块 -->
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <!-- 2,引入 vue-router模块 -->
+    <script src="../node_modules/vue-router/dist/vue-router.js"></script>
+    <script>
+        var Home = {
+            template: "#home",
+        }
+        var Song = {
+            template: "#song",
+        }
+        var Movie = {
+            template: "#movie",
+        }
+        var Game = {
+            template: "#game",
+        }
+
+        // 4,创建router对象
+        var myRouter = new VueRouter({
+            // 5,配置路由对象
+            routes: [
+                // 路由匹配的规则
+                {
+                    //   动态路由参数  以冒号开头
+                    path: "/home",
+                    name: "home",
+                    component: Home,
+                    // 
+                    children: [{
+                            path: "song",
+                            component: Song
+                        },
+                        {
+                            path: "movie",
+                            component: Movie
+                        },
+                        {
+                            path: "game",
+                            component: Game
+                        }
+                    ]
+                },
+            ]
+        })
+        var App = {
+            template: "#App",
+        }
+        var vm = new Vue({
+            el: "#app",
+            components: {
+                App
+            },
+            router: myRouter,
+            template: `<App></App>`
+        })
+    </script>
+</body>
+
+</html>
