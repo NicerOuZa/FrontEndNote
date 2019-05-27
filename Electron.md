@@ -20,7 +20,7 @@
   + 注意 package.json 配置的 main 必须是主进程 main.js
   + script 下的 start 需改成 "start" : "electron ."
 
-+ 使用命令`Electron`的依赖：`npm install --save-dev electron`
++ 使用命令`Electron`的依赖：`npm install --save -dev electron`
 
 + 书写主进程 `main.js` 的基本代码
 
@@ -43,7 +43,7 @@
       mainWindow = new BrowserWindow({
         // 默认打开的宽度和高度
         width: 400,
-        height: 400
+        height: 400,
         // ★ 注意这里要把 nodeIntegration 设置为 true 在改页面的渲染进程中才能使用 node.js 的 API
         webPreferences: {
           nodeIntegration: true
