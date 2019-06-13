@@ -41,7 +41,7 @@ let person1 = new Person()
 person1.testFun()
 ```
 
-
+### 2，[js中this指向及继承](https://juejin.im/post/5cfd9d30f265da1b94213d28)
 
 # ES6新特性
 

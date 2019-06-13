@@ -15,7 +15,7 @@
 
 + 进入 `election-demo` 新建一个`index.html` 和`main.js`
 
-+ 使用命令：`npm init` 新建一个`package.json`文件 
++ 使用命令：`npm init` 新建一个`package.json`文件
 
   + 注意 package.json 配置的 main 必须是主进程 main.js
   + script 下的 start 需改成 "start" : "electron ."
