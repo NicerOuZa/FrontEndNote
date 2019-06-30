@@ -237,6 +237,75 @@ v-show 和 v-if用法基本一样
 
     
 
+### 8，[自定义指令](https://vuejs.bootcss.com/v2/guide/custom-directive.html)
+
+自定义**全局**的指令
+
+```js
+        // 使用 Vue.directive() 定义全局的指令
+        //      参数1：指令的名称（注意定义的时候不用加 v- 前缀，但是在调用的时候要加 v- 前缀）
+        //      参数2：是一个对象，在这个对象身上，有一些指令相关的函数，这些函数可以在特定的阶段，执行相关的操作   
+
+        // 注册一个全局自定义指令 `v-focus`
+        Vue.directive('focus', {
+            // 在每个函数中的参数： 
+            //      第一个参数 el：指令所绑定的元素，可以用来直接操作 DOM
+            //      第二个参数 binding： 一个对象，包含各种属性
+            // 只调用一次，指令第一次绑定到元素时调用。在这里可以进行一次性的初始化设置。
+            bind: function (el, binding) {
+                // 注意bind方法在执行的时候，由于元素还没有插入到DOM中，这时候会有一些元素的方法不能执行（如el.focus）
+                // 设置元素的style与元素是否插入到DOM无关，所以能够执行
+                // style（样式），只要通过指令绑定给了元素，不管这个元素有没有被插入到页面中，这个元素肯定有了一个内联的样式
+                // 将来元素肯定会显示到页面中，这时候，浏览器的渲染引擎必然会解析样式，应用给这个元素
+                el.style.color = binding.value
+                console.log(binding);
+            },
+            // 被绑定元素插入DOM时调用 (仅保证父节点存在，但不一定已被插入文档中）
+            inserted: function (el) {
+                // 和 JS 行为有关的操作最好在inserted方法中执行，防止行为不生效   
+                el.focus()
+            },
+            // 当 VNode 更新的时候，会执行updated，（可能会触发多次）
+            updated: function () {
+
+            }
+        })
+```
+
+自定义**私有**的指令
+
+```js
+const app = new Vue({
+            el:"#app",
+            data() {
+                return {
+                    msg1: ""
+                }
+            },
+            // 自定义私有指令
+            directives:{
+                "focus" :{
+                    bind:function(){},
+                    inserted:function(){},
+                    updated:function(){}
+                }
+            }
+        })
+```
+
+指令函数的简写
+
+> 在很多时候，你可能想在 `bind` 和 `update` 时触发相同行为，而不关心其它的钩子。比如这样写:
+
+```js
+//当不传入一个对象而是只是一个方法时，这个方法等同于把代码写到了bind和update中了
+Vue.directive('color-swatch', function (el, binding) {
+  el.style.backgroundColor = binding.value
+})
+```
+
+
+
 #  三，vue组件
 
 ### 1，局部组件的简单使用
@@ -727,7 +796,7 @@ Vue.component("A", {
 
 
 
-# 四，过滤器（filter）
+# 四，[过滤器（filter）](https://vuejs.bootcss.com/v2/guide/filters.html)
 
  <h3>过滤器作用：为页面中的数据进行添油加醋的功能</h3>
 
@@ -1014,7 +1083,7 @@ Vue.component("A", {
 
 
 
-#  八，Vue 路由 （Vue-Router）
+#  八，[Vue 路由 （Vue-Router）](https://router.vuejs.org/zh/)
 
 **[什么是路由](https://www.cnblogs.com/yuqing6/p/6731980.html)**
 
