@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-     <!-- 引入 vue 模块 -->
+    <!-- 引入 vue 模块 -->
     <script src="../node_modules/vue/dist/vue.js"></script>
     <!-- 引入 vue-router模块 -->
     <script src="../node_modules/vue-router/dist/vue-router.js"></script>
@@ -13,60 +13,57 @@
 </head>
 
 <body>
-
-
     <div id="app">
         <h1>Hello App!</h1>
-        <p>
-            <!-- 使用 router-link 组件来导航. -->
-            <!-- 通过传入 `to` 属性指定链接. -->
-            <!-- <router-link> 默认会被渲染成一个 `<a>` 标签 -->
-            <router-link to="/foo">Go to Foo</router-link>
-            <router-link to="/bar">Go to Bar</router-link>
-        </p>
-        <!-- 路由出口 -->
-        <!-- 路由匹配到的组件将渲染在这里 -->
-        <router-view></router-view>
+        <h1>--{{msg1}}--</h1>
+        <input type="text" v-model="msg1" v-focus = "'pink'"/>
+
     </div>
     <script>
-        // 0. 如果使用模块化机制编程，导入Vue和VueRouter，要调用 Vue.use(VueRouter)
+        // 使用 Vue.directive() 定义全局的指令
+        //      参数1：指令的名称（注意定义的时候不用加 v- 前缀，但是在调用的时候要加 v- 前缀）
+        //      参数2：是一个对象，在这个对象身上，有一些指令相关的函数，这些函数可以在特定的阶段，执行相关的操作   
 
-        // 1. 定义 (路由) 组件。
-        // 可以从其他文件 import 进来
-        const Foo = {
-            template: '<div>foo</div>'
-        }
-        const Bar = {
-            template: '<div>bar</div>'
-        }
-
-        // 2. 定义路由
-        // 每个路由应该映射一个组件。 其中"component" 可以是
-        // 通过 Vue.extend() 创建的组件构造器，
-        // 或者，只是一个组件配置对象。
-        // 我们晚点再讨论嵌套路由。
-        const routes = [{
-                path: '/foo',
-                component: Foo
+        // 注册一个全局自定义指令 `v-focus`
+        Vue.directive('focus', {
+            // 在每个函数中的参数： 
+            //      第一个参数 el：指令所绑定的元素，可以用来直接操作 DOM
+            //      第二个参数 binding： 一个对象，包含各种属性
+            // 只调用一次，指令第一次绑定到元素时调用。在这里可以进行一次性的初始化设置。
+            bind: function (el, binding) {
+                // 注意bind方法在执行的时候，由于元素还没有插入到DOM中，这时候会有一些元素的方法不能执行（如el.focus）
+                // 设置元素的style与元素是否插入到DOM无关，所以能够执行
+                // style（样式），只要通过指令绑定给了元素，不管这个元素有没有被插入到页面中，这个元素肯定有了一个内联的样式
+                // 将来元素肯定会显示到页面中，这时候，浏览器的渲染引擎必然会解析样式，应用给这个元素
+                el.style.color = binding.value
+                console.log(binding);
             },
-            {
-                path: '/bar',
-                component: Bar
+            // 被绑定元素插入DOM时调用 (仅保证父节点存在，但不一定已被插入文档中）
+            inserted: function (el) {
+                // 和 JS 行为有关的操作最好在inserted方法中执行，防止行为不生效   
+                el.focus()
+            },
+            // 当 VNode 更新的时候，会执行updated，（可能会触发多次）
+            updated: function () {
+
             }
-        ]
-
-        // 3. 创建 router 实例，然后传 `routes` 配置
-        // 你还可以传别的配置参数, 不过先这么简单着吧。
-        const router = new VueRouter({
-            routes // (缩写) 相当于 routes: routes
         })
-
-        // 4. 创建和挂载根实例。
-        // 记得要通过 router 配置参数注入路由，
-        // 从而让整个应用都有路由功能
         const app = new Vue({
-            router
-        }).$mount('#app')
+            el:"#app",
+            data() {
+                return {
+                    msg1: ""
+                }
+            },
+            // 自定义私有指令
+            directives:{
+                "focus" :{
+                    bind:function(){},
+                    inserted:function(){},
+                    updated:function(){}
+                }
+            }
+        })
 
         // 现在，应用已经启动了！
     </script>
