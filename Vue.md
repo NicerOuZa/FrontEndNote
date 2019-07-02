@@ -691,6 +691,8 @@ Vue.component("A", {
 
 ### 5，组件的生命周期
 
+![](img/lifecycle.png)
+
 ```html
 <div id="app">
         <!-- vue内置组件 keep-alive  -->
@@ -705,16 +707,19 @@ Vue.component("A", {
     <script>
         /*
         生命周期方法：
-            beforeCreate
-            created
-            beforeMount
-            mounted
-            beforeUpdate
-            updated
+        	组件创建阶段的声明周期方法
+                beforeCreate
+                created
+                beforeMount
+                mounted
+            组件运行阶段的生命周期方法
+                beforeUpdate
+                updated
+            组件进入销毁阶段
+                beforeDestroy
+                destroyed
             activated
             deactivated
-            beforeDestroy
-            destroyed
             errorCaptured
          */
         Vue.component("Test", {
@@ -730,6 +735,7 @@ Vue.component("A", {
                 }
             },
             // 组件创建之前
+            // data和methods都还没有初始化
             beforeCreate() {
                 console.log(this.msg);
             },
@@ -737,22 +743,27 @@ Vue.component("A", {
             // 组件创建之后
             /* 
                 在created方法中可以操作后端数据
-                应用：发起 ajax 请求    
+                应用：发起 ajax 请求
+                这里data和methods都已经被初始化好了
+                如果调用methods中的方法，或者操作data中的数据，最早在created中
             */
             created() {
                 console.log(this.msg);
             },
 
             // 在挂载数据到dom之前
+            // 模板已经在内存中编辑完成，但是尚未把模板渲染到页面上
             beforeMount() {
                 console.log(document.getElementById("app"));
             },
 
             // 在挂载数据到dom之后
+            // 内存中的模板，已经真实的挂载到了页面上，用户已经可以看到渲染好的页面了
+            // 如果要通过某些插件操作DOM节点，最早要在mounted中进行       
             mounted() {
                 console.log(document.getElementById("app"));
             },
-            // 更新DOM之前,  应用：可以获取原始的DOM
+            // 更新DOM之前，应用：可以获取原始的DOM
             beforeUpdate() {
                 console.log(document.getElementById("app").innerHTML);
             },
@@ -799,7 +810,6 @@ Vue.component("A", {
 # 四，[过滤器（filter）](https://vuejs.bootcss.com/v2/guide/filters.html)
 
  <h3>过滤器作用：为页面中的数据进行添油加醋的功能</h3>
-
 ### 1，局部过滤器的使用
 
 ```html
@@ -869,7 +879,6 @@ Vue.component("A", {
 # 五，vue监听器（watch）
 
 <h3>监视属性： 通过vm对象的$watch() 或 watch配置来监听指定的属性，当属性变化时，回调函数自动调用。</h3>
-
 - watch监听的是单个属性
   - 基本数据类型  简单监视
   - 复杂数据类型  深度监视
@@ -1662,4 +1671,47 @@ var UserQuery = {
 
 </html>
 ```
+
+
+
+# 九，vue发起请求
+
+### 1，[使用vue-resource发起请求](https://github.com/pagekit/vue-resource)
+
+```
+ npm i vue-resource -s
+```
+
+**vue实例中使用**
+
+```js
+var vm = new Vue({
+    el: "#app",
+    data () {
+        return {
+
+        }
+    },
+    methods: {
+        getInfo(){
+            // get请求
+            this.$http.get('/someUrl', [config]).then(successCallback, errorCallback);
+            this.$http.get('https://api.apiopen.top/getAllUrl').then((result)=>{
+                // console.log(result)
+                // 通过result.body拿到服务器返回的数据
+                console.log(result.body)
+            })
+            // post请求
+            // 手动发起的post请求没有表单格式，所以有的夫服务器处理不了
+            //      通过 post 方法的第三个参数，设置提交的内容类型为普通表单数据格式
+            // this.$http.post('/someUrl', [body], [config]).then(successCallback, errorCallback);
+            this.$http.post('https://api.apiopen.top/getWangYiNews', {}, {emulateJSON: true}).then((result) => {
+                console.log(result.body)
+            })
+        }
+    }
+})
+```
+
+
 

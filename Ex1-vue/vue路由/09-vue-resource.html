@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script src="../node_modules/vue-resource/dist/vue-resource.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <button @click='getInfo'>get请求</button>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+
+                }
+            },
+            methods: {
+                getInfo() {
+                    // get请求
+                    this.$http.get('/someUrl', [config]).then(successCallback, errorCallback);
+                    this.$http.get('https://api.apiopen.top/getAllUrl').then((result)=>{
+                        // console.log(result)
+                        // 通过result.body拿到服务器返回的数据
+                        console.log(result.body)
+                    })
+                    // post请求
+                    // 手动发起的post请求没有表单格式，所以有的夫服务器处理不了
+                    //      通过 post 方法的第三个参数，设置提交的内容类型为普通表单数据格式
+                    // this.$http.post('/someUrl', [body], [config]).then(successCallback, errorCallback);
+                    this.$http.post('https://api.apiopen.top/getWangYiNews', {}, {emulateJSON: true}).then((result) => {
+                        console.log(result.body)
+                    })
+                }
+            }
+
+        })
+    </script>
+</body>
+
+</html>
