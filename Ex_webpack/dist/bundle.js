@@ -104,7 +104,7 @@ eval("module.exports = \"zt\"\n\n//# sourceURL=webpack:///./src/a.js?");
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("let str = __webpack_require__(/*! ./a.js */ \"./src/a.js\")\r\nconsole.log(str)\n\n//# sourceURL=webpack:///./src/index.js?");
+eval("let str = __webpack_require__(/*! ./a.js */ \"./src/a.js\")\r\nconsole.log(str)\r\n\n\n//# sourceURL=webpack:///./src/index.js?");
 
 /***/ })
 
