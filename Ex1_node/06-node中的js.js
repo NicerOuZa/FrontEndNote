@@ -6,7 +6,6 @@
  *      exports默认是一个空对象
  *      在exports中传入值就可以实现文件模块之间的通信
  */
-var ret = require("./07-发送文件数据.js/index.js")
 
 var http = require("http")
 var server = http.createServer()

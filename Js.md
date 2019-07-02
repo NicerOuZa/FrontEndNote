@@ -43,6 +43,30 @@ person1.testFun()
 
 ### 2，[js中this指向及继承](https://juejin.im/post/5cfd9d30f265da1b94213d28)
 
+
+
+
+# JS格式化
+
+### eslint的使用
+
+一、vs中安装eslint插件
+
+二、npm 全局安装 eslint   sudo npm i -g eslint``
+
+三、vs终端运行eslint --init
+
+四、在vscode的setting中设置
+
+```yaml
+   "eslint.autoFixOnSave": true,
+```
+
+
+
 # ES6新特性
 
 [阮一峰ES6教程](http://es6.ruanyifeng.com/)
+
+
+

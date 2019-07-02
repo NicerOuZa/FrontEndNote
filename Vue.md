@@ -1713,5 +1713,7 @@ var vm = new Vue({
 })
 ```
 
+### 2，JSONP 
+
 
 

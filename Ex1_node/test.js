@@ -1,12 +1,17 @@
-// console.log("开始");
+var http = require("http")
+var server = http.createServer()
+var urlModule = require('url')
 
-// var mytimeout = setTimeout(function(){
-//     var i = 0
-//     console.log(i++);
-// }, 1000);
-// // clearTimeout(mytimeout);
-// console.log("结束");
-function text(str) {
-    console.log(str)
-}
-text(1)
+server.on("request", function (req, res) {
+    const {pathname:url, query} = urlModule.parse(req.url, true)
+    if (url === "/get"){
+        console.log(query)
+        res.end(query.name)
+    } 
+})
+
+//4，绑定端口号，启动服务器
+server.listen(3000, function () {
+    console.log("server success")
+    console.log("port：3000")
+})

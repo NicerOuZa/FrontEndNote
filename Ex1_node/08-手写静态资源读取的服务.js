@@ -7,7 +7,7 @@ server.on("request", function (request, response) {
     fs.readFile(DirPath + filePath, function (error, data) {
 
         if (error) {
-            return response.end("errorMsg: " + error);
+            return response.end("errorMsg: " + error)
         }
 
         response.end(data)
