@@ -1719,7 +1719,7 @@ var vm = new Vue({
 
 
 
-# 十，vue中的动画
+# 十，[vue中的动画](https://vuejs.bootcss.com/v2/guide/transitions.html)
 
 
 
