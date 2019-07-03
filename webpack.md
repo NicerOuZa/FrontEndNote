@@ -335,12 +335,14 @@ module.exports = {
 
   optimization: {
     minimizer:[
+      // 设置 js 压缩
       new Uglifyjs({
         // 设置一下参数
         cache: true, //是否缓存
         parallel: true, // 是否并发打包
         sourceMap: true // sourcemap就是为了解决上述代码定位的问题，简单理解，就是构建了处理前的代码和处理后的代码之间的桥梁。主要是方便开发人员的错误定位
       }),
+      // 压缩 css 文件
       new OptimizeCss()
     ]
   },
@@ -349,9 +351,48 @@ module.exports = {
 
 
 
+### 6，把es6转成es5
+
+1. 安装 babel-loader
+
+```js
+npm i babel-loader @babel/core @babel/preset-env -s -d
+// 解析es7的语法的插件
+npm i @babel/plugin-proposal-class-properties -s -d
+```
+
+2. 配置 webpack.config.js
+
+```js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              // 引入 babel/preset-env 把es6转成es5
+              '@babel/preset-env'
+            ]，
+            // 引入插件@babel/plugin-proposal-class-properties把es7转为es5
+            plugins:[
+              '@babel/plugin-proposal-class-properties'
+            ]
+          }
+        }
+      }, 
+    ]
+  }
+};
+```
 
 
 
+安装
 
-
+```
+npm i @babel/plugin-proposal-class-properties -s -d
+```
 

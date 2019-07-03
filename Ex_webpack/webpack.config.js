@@ -22,7 +22,7 @@ module.exports = {
 
 
   optimization: {
-    minimizer:[
+    minimizer: [
       new Uglifyjs({
         // 设置一下参数
         cache: true, //是否缓存
@@ -57,6 +57,22 @@ module.exports = {
   // 模块
   module: {
     rules: [
+      {
+        test: /\.js$/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              // 引入 babel/preset-env 把es6转成es5
+              '@babel/preset-env'
+            ],
+            // 引入插件@babel/plugin-proposal-class-properties把es7转为es5
+            plugins:[
+              '@babel/plugin-proposal-class-properties'
+            ]
+          }
+        }
+      },
       {
         test: /\.css$/,
         use: [

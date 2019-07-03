@@ -93,7 +93,7 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("module.exports = \"zt\"\n\n//# sourceURL=webpack:///./src/a.js?");
+eval("module.exports = \"zt\";\n\n//# sourceURL=webpack:///./src/a.js?");
 
 /***/ }),
 
@@ -115,7 +115,7 @@ eval("// extracted by mini-css-extract-plugin\n\n//# sourceURL=webpack:///./src/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("__webpack_require__(/*! ./index.css */ \"./src/index.css\")\r\n__webpack_require__(/*! ./index.less */ \"./src/index.less\")\r\nlet str = __webpack_require__(/*! ./a.js */ \"./src/a.js\")\r\n\r\nconsole.log(str)\r\n\n\n//# sourceURL=webpack:///./src/index.js?");
+eval("function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }\n\n__webpack_require__(/*! ./index.css */ \"./src/index.css\");\n\n__webpack_require__(/*! ./index.less */ \"./src/index.less\");\n\nvar str = __webpack_require__(/*! ./a.js */ \"./src/a.js\");\n\nconsole.log(str);\n\nvar fn = function fn() {\n  console.log(\"clg\");\n};\n\nvar A = function A() {\n  _classCallCheck(this, A);\n\n  _defineProperty(this, \"a\", 1);\n};\n\n//# sourceURL=webpack:///./src/index.js?");
 
 /***/ }),
 
