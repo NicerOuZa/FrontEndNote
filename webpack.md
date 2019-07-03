@@ -135,6 +135,8 @@ module.exports = {
 
 ### 5，样式处理
 
+#### 1，将 css 样式模块加入到  style 中
+
 1. 在 js 中引入 css 的模块
 
 ```js
@@ -212,7 +214,7 @@ module.exports = {
 
 
 
-**将css从html抽离出来**
+#### 2，将css从html抽离出来
 
 1. 安装抽离css的插件
 
@@ -259,7 +261,7 @@ module.exports = {
 };
 ```
 
-### 6，自动给css加浏览器前缀
+#### 3，自动给css加浏览器前缀
 
 1. 安装 postcss-loader
 
@@ -267,4 +269,89 @@ module.exports = {
 npm i postcss-loader autoprefixer -d -s
 ```
 
-2. 
+2. 配置 postcss.config.js 
+
+```js
+module.exports = {
+    plugins:[require('autoprefixer')]
+}
+```
+
+3. 配置 webpack.config.js
+
+```js
+let MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+module.exports = {
+  // 模块
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          // 解析css之前来添加浏览器前缀
+          "postcss-loader"
+        ]
+      },
+      {
+        test: /\.less$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          // 解析css之前来添加浏览器前缀
+          "postcss-loader",
+          "less-loader"
+        ]
+      }
+    ]
+  }
+};
+
+```
+
+#### 4，压缩抽离的 css 文件
+
+1. 安装插件 optimize-css-assets-webpack-plugin
+
+```
+npm i optimize-css-assets-webpack-plugin -d -s
+```
+
+2. 压缩优化了 css 原来的 js 就不能压缩了，需要使用 uglifyjs-webpack-plugin 插件来优化js
+
+```
+npm i uglifyjs-webpack-plugin -s -d
+```
+
+3. 配置 webpack.config.js
+
+```js
+let OptimizeCss = require('optimize-css-assets-webpack-plugin')
+let Uglifyjs = require('uglifyjs-webpack-plugin')
+
+module.exports = {
+
+  optimization: {
+    minimizer:[
+      new Uglifyjs({
+        // 设置一下参数
+        cache: true, //是否缓存
+        parallel: true, // 是否并发打包
+        sourceMap: true // sourcemap就是为了解决上述代码定位的问题，简单理解，就是构建了处理前的代码和处理后的代码之间的桥梁。主要是方便开发人员的错误定位
+      }),
+      new OptimizeCss()
+    ]
+  },
+};
+```
+
+
+
+
+
+
+
+
+
