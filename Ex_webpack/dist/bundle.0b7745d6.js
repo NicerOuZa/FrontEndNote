@@ -97,6 +97,17 @@ eval("module.exports = \"zt\"\n\n//# sourceURL=webpack:///./src/a.js?");
 
 /***/ }),
 
+/***/ "./src/index.css":
+/*!***********************!*\
+  !*** ./src/index.css ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("// extracted by mini-css-extract-plugin\n\n//# sourceURL=webpack:///./src/index.css?");
+
+/***/ }),
+
 /***/ "./src/index.js":
 /*!**********************!*\
   !*** ./src/index.js ***!
@@ -104,7 +115,18 @@ eval("module.exports = \"zt\"\n\n//# sourceURL=webpack:///./src/a.js?");
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("let str = __webpack_require__(/*! ./a.js */ \"./src/a.js\")\r\nconsole.log(str)\r\n\n\n//# sourceURL=webpack:///./src/index.js?");
+eval("__webpack_require__(/*! ./index.css */ \"./src/index.css\")\r\n__webpack_require__(/*! ./index.less */ \"./src/index.less\")\r\nlet str = __webpack_require__(/*! ./a.js */ \"./src/a.js\")\r\n\r\nconsole.log(str)\r\n\n\n//# sourceURL=webpack:///./src/index.js?");
+
+/***/ }),
+
+/***/ "./src/index.less":
+/*!************************!*\
+  !*** ./src/index.less ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("// extracted by mini-css-extract-plugin\n\n//# sourceURL=webpack:///./src/index.less?");
 
 /***/ })
 
