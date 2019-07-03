@@ -105,6 +105,8 @@ module.exports = {
 
    ```js
    -----webpack.config.js-----
+   // 引入插件
+   let HtmlWebpackPlugin = require("html-webpack-plugin");
    module.exports = {
    	// 用数组放着所有webpack的插件
        plugins: [
@@ -124,7 +126,145 @@ module.exports = {
                hash: true
            })
        ]
-   }
+}
    ```
-
    
+   
+
+
+
+### 5，样式处理
+
+1. 在 js 中引入 css 的模块
+
+```js
+require('./index.css')
+```
+
+2. 在 css 文件引入其他 css 文件
+
+```css
+@import './a.css';
+body{ background-color: pink }
+```
+
+3. 安装 css-loader 和 style-loader
+
+```js
+npm i css-loader style-loader -D -S
+```
+
+4. 配置 webpack.config.js
+
+```js
+module.exports = {
+    // 模块
+  // 模块
+  module: {
+    //规则
+    // 引入 cssloader -- 负责解析@import语法
+    // style-loader -- 把css插入head的标签中
+    // loader用法：
+    //      字符串只用一个loader
+    //      多个loader需要用数组
+    // loader默认从后向前执行
+    // 单个loader可以是一个字符串也可以写成对象形式
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          //  style-loader -- 把css插入head的标签中
+          {
+            loader: "style-loader",
+            options: {
+              // 将引入的css插入到html最上面（降低插入的css的优先级）
+              insertAt: "top"
+            }
+          },
+          //   cssloader -- 负责解析@import语法
+          "css-loader"
+        ]
+      },
+      // 处理less文件  (其他css预处理器sass等也可以处理)
+      {
+        test: /\.less$/,
+        use: [
+          //  style-loader -- 把css插入head的标签中
+          {
+            loader: "style-loader",
+            options: {
+              // 将引入的css插入到html最上面（降低插入的css的优先级）
+              insertAt: "top"
+            }
+          },
+          //  cssloader -- 负责解析@import语法
+          "css-loader",
+          // 	把less转成css
+          // 需要安装 less和less-loader（less-loader调用）
+          // 		npm i less less-loader -d -s
+          "less-loader"
+        ]
+      }
+    ]
+  }
+}
+```
+
+
+
+**将css从html抽离出来**
+
+1. 安装抽离css的插件
+
+```js
+npm i mini-css-extract-plugin -d -s
+```
+
+2. 配置 webpack.config.js
+
+```js
+// 引入插件对象
+let MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+module.exports = {
+  // 用数组放着所有webpack的插件
+  plugins: [
+    new MiniCssExtractPlugin({
+      // 设置抽离出的css文件的名字
+      filename: "main.css"
+    })
+  ],
+  // 模块
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          // 使用 MiniCssExtractPlugin的loader
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+        ]
+      }, 
+      {
+        test: /\.less$/,
+        use: [
+          // 使用 MiniCssExtractPlugin的loader
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "less-loader"
+        ]
+      }
+    ]
+  }
+};
+```
+
+### 6，自动给css加浏览器前缀
+
+1. 安装 postcss-loader
+
+```js
+npm i postcss-loader autoprefixer -d -s
+```
+
+2. 
