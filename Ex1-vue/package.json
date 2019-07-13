@@ -4,6 +4,7 @@
   "description": "vue练习",
   "main": "index.js",
   "dependencies": {
+    "animate.css": "^3.7.2",
     "iview": "^3.4.1",
     "vue": "^2.6.10",
     "vue-router": "^3.0.6"
