@@ -1,3 +1,5 @@
+# 
+
 # 一，vue基础
 
 ### MVVM与MVC
@@ -123,6 +125,8 @@ v-show 和 v-if用法基本一样
 
 - -  <input type="button"       value="按钮" **v-on:click = "show"**>
   - 即   "v-on:  "  的缩写为   " @ "
+- vue中的事件通过传入`$event`来获得event对象
+  - `<h2 v-text="msg1" @click="clickHandler($event)"></h2>`
 
 ### 4，v-bind的使用
 
@@ -137,10 +141,8 @@ v-show 和 v-if用法基本一样
 
   -  <input type="button"       value="按钮" **:title = "mytitle"**>
 
-  - - 省略掉v-bind只留  “:” 也是合法的，编译时会自动识别为v-bind
+    - 省略掉v-bind只留  “:” 也是合法的，编译时会自动识别为v-bind
     - 即   "  v-bind:  "         的缩写为   " : "
-- vue中的事件通过传入`$event`来获得event对象
-  - `<h2 v-text="msg1" @click="clickHandler($event)"></h2>`
 
 ### 5，css绑定渲染
 
@@ -1723,5 +1725,213 @@ var vm = new Vue({
 
 
 
+### [1，过渡的类名](https://vuejs.bootcss.com/v2/guide/transitions.html#过渡的类名)
 
+在进入/离开的过渡中，会有 6 个 class 切换。
+
+1. `v-enter`：定义进入过渡的开始状态。在元素被插入之前生效，在元素被插入之后的下一帧移除。
+2. `v-enter-active`：定义进入过渡生效时的状态。在整个进入过渡的阶段中应用，在元素被插入之前生效，在过渡/动画完成之后移除。这个类可以被用来定义进入过渡的过程时间，延迟和曲线函数。
+3. `v-enter-to`: **2.1.8版及以上** 定义进入过渡的结束状态。在元素被插入之后下一帧生效 (与此同时 `v-enter` 被移除)，在过渡/动画完成之后移除。
+4. `v-leave`: 定义离开过渡的开始状态。在离开过渡被触发时立刻生效，下一帧被移除。
+5. `v-leave-active`：定义离开过渡生效时的状态。在整个离开过渡的阶段中应用，在离开过渡被触发时立刻生效，在过渡/动画完成之后移除。这个类可以被用来定义离开过渡的过程时间，延迟和曲线函数。
+6. `v-leave-to`: **2.1.8版及以上** 定义离开过渡的结束状态。在离开过渡被触发之后下一帧生效 (与此同时 `v-leave` 被删除)，在过渡/动画完成之后移除。
+
+![Transition Diagram](https://vuejs.bootcss.com/images/transition.png)
+
+注意：对于这些在过渡中切换的类名来说，如果你使用一个没有名字的 `<transition>`，则 `v-` 是这些类名的默认前缀。如果你使用了 `<transition name="my-transition">`，那么 `v-enter` 会替换为 `my-transition-enter`。
+
+### [2，CSS 动画](https://vuejs.bootcss.com/v2/guide/transitions.html#CSS-动画)
+
+CSS 动画用法同 CSS 过渡，区别是在动画中 `v-enter` 类名在节点插入 DOM 后不会立即删除，而是在 `animationend` 事件触发时删除。
+
+示例：(省略了兼容性前缀)
+
+```html
+<link href="https://cdn.jsdelivr.net/npm/animate.css@3.5.1" rel="stylesheet" type="text/css">
+
+<div id="example-3">
+  <button @click="show = !show">
+    Toggle render
+  </button>
+  <transition
+    name="custom-classes-transition"
+    enter-active-class="animated tada"
+    leave-active-class="animated bounceOutRight"
+  >
+    <p v-if="show">hello</p>
+  </transition>
+</div>
+```
+
+```js
+new Vue({
+  el: '#example-3',
+  data: {
+    show: true
+  }
+})
+```
+
+
+
+### [3，自定义过渡的类名](https://vuejs.bootcss.com/v2/guide/transitions.html#自定义过渡的类名)
+
+我们可以通过以下特性来自定义过渡类名：
+
+- `enter-class`
+- `enter-active-class`
+- `enter-to-class` (2.1.8+)
+- `leave-class`
+- `leave-active-class`
+- `leave-to-class` (2.1.8+)
+
+他们的优先级高于普通的类名，这对于 Vue 的过渡系统和其他第三方 CSS 动画库，如 [Animate.css](https://daneden.github.io/animate.css/) 结合使用十分有用。
+
+示例：
+
+```html
+<link href="https://cdn.jsdelivr.net/npm/animate.css@3.5.1" rel="stylesheet" type="text/css">
+
+<div id="example-3">
+  <button @click="show = !show">
+    Toggle render
+  </button>
+  <transition
+    name="custom-classes-transition"
+    enter-active-class="animated tada"
+    leave-active-class="animated bounceOutRight"
+  >
+    <p v-if="show">hello</p>
+  </transition>
+</div>
+```
+
+```js
+new Vue({
+  el: '#example-3',
+  data: {
+    show: true
+  }
+})
+```
+
+
+
+### [4，同时使用过渡和动画](https://vuejs.bootcss.com/v2/guide/transitions.html#同时使用过渡和动画)
+
+Vue 为了知道过渡的完成，必须设置相应的事件监听器。它可以是 `transitionend`或 `animationend` ，这取决于给元素应用的 CSS 规则。如果你使用其中任何一种，Vue 能自动识别类型并设置监听。
+
+但是，在一些场景中，你需要给同一个元素同时设置两种过渡动效，比如 `animation` 很快的被触发并完成了，而 `transition` 效果还没结束。在这种情况中，你就需要使用 `type` 特性并设置 `animation` 或 `transition` 来明确声明你需要 Vue 监听的类型。
+
+
+
+### [5，显性的过渡持续时间](https://vuejs.bootcss.com/v2/guide/transitions.html#显性的过渡持续时间)
+
+在很多情况下，Vue 可以自动得出过渡效果的完成时机。默认情况下，Vue 会等待其在过渡效果的根元素的第一个 `transitionend` 或 `animationend` 事件。然而也可以不这样设定——比如，我们可以拥有一个精心编排的一系列过渡效果，其中一些嵌套的内部元素相比于过渡效果的根元素有延迟的或更长的过渡效果。
+
+在这种情况下你可以用 `<transition>` 组件上的 `duration` 属性定制一个显性的过渡持续时间 (以毫秒计)：
+
+```html
+<transition :duration="1000">...</transition>
+```
+
+你也可以定制进入和移出的持续时间：
+
+```html
+<transition :duration="{ enter: 500, leave: 800 }">...</transition
+```
+
+### [6，JavaScript 钩子](https://vuejs.bootcss.com/v2/guide/transitions.html#JavaScript-钩子)
+
+这里的钩子函数可以理解为动画的生命周期函数
+
+可以在属性中声明 JavaScript 钩子
+
+```html
+<transition
+  v-on:before-enter="beforeEnter"
+  v-on:enter="enter"
+  v-on:after-enter="afterEnter"
+  v-on:enter-cancelled="enterCancelled"
+
+  v-on:before-leave="beforeLeave"
+  v-on:leave="leave"
+  v-on:after-leave="afterLeave"
+  v-on:leave-cancelled="leaveCancelled"
+>
+  <!-- ... -->
+</transition>
+```
+
+```js
+methods: {
+    // --------
+    // 进入中
+    // --------
+
+    // 第一个参数 el 是要执行动画的那个DOM元素
+    beforeEnter: function (el) {
+        // beforeEnter 表示动画入场之前，此时，动画尚未开始，可以在 beforeEnter 中设置元素开始动画之前的起始样式
+        el.style.transform = "translate(0,0)"
+    },
+
+    // 当与 CSS 结合使用时
+    // 回调函数 done 是可选的
+    enter: function (el, done) {
+        // el.offsetWidth 没有实际的作用，但是，如果不写，出不来动画的效果
+        // 可以理解 el.offsetWidth 会强制刷新动画
+        el.offsetWidth
+        // enter 表示动画开始之后的样式，这里可以设置小球完成动画之后的结束状态
+        el.style.transform = "translate(150px,450px)"
+        el.style.transition = "all ls ease"
+
+        // 这里的 done，其实就是 afterEnter 函数，也就是说 done 是 afterEnter 函数的引用
+        done() 
+    },
+    afterEnter: function (el) {
+        // 动画完成之后 ，会调用 afterEnter
+        // ...
+    },
+    enterCancelled: function (el) {
+        // ...
+    },
+
+    // --------
+    // 离开时
+    // --------
+
+    beforeLeave: function (el) {
+        // ...
+    },
+    // 当与 CSS 结合使用时
+    // 回调函数 done 是可选的
+    leave: function (el, done) {
+        // ...
+        done()
+    },
+    afterLeave: function (el) {
+        // ...
+    },
+    // leaveCancelled 只用于 v-show 中
+    leaveCancelled: function (el) {
+        // ...
+    }
+}
+```
+
+这些钩子函数可以结合 CSS `transitions/animations` 使用，也可以单独使用。
+
+注意：
+
+当只用 JavaScript 过渡的时候，**在 enter 和 leave 中必须使用 done进行回调**。否则，它们将被同步调用，过渡会立即完成。
+
+推荐对于仅使用 JavaScript 过渡的元素添加 `v-bind:css="false"`，Vue 会跳过 CSS 的检测。这也可以避免过渡过程中 CSS 的影响。
+
+### [7，列表过渡](https://vuejs.bootcss.com/v2/guide/transitions.html#列表过渡)
+
+怎么同时渲染整个列表，比如使用 `v-for` ？在这种场景中，使用 `<transition-group>` 组件。在我们深入例子之前，先了解关于这个组件的几个特点：
+
+- 不同于 `<transition>`，它会以一个真实元素呈现：默认为一个 `<span>`。你也可以通过 `tag` 特性更换为其他元素。
+- [过渡模式](https://vuejs.bootcss.com/v2/guide/transitions.html#过渡模式)不可用，因为我们不再相互切换特有的元素。
+- 内部元素 **总是需要** 提供唯一的 `key` 属性值。
 
