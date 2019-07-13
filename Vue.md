@@ -1724,6 +1724,7 @@ var vm = new Vue({
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ### [1，过渡的类名](https://vuejs.bootcss.com/v2/guide/transitions.html#过渡的类名)
 
 在进入/离开的过渡中，会有 6 个 class 切换。
@@ -1775,6 +1776,8 @@ new Vue({
 })
 ```
 
+=======
+>>>>>>> parent of c8da5c4... 更新
 =======
 >>>>>>> parent of c8da5c4... 更新
 
