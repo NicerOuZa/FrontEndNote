@@ -43,6 +43,20 @@ person1.testFun()
 
 ### 2，[js中this指向及继承](https://juejin.im/post/5cfd9d30f265da1b94213d28)
 
+### 3，可选参数对象-解构赋值
+
+```js
+function test({sum1, sum2, sum3 = 1, sum4 = 2}) {
+    console.log((`sum1-- ${sum1}`))
+    console.log((`sum2-- ${sum2}`))
+    console.log((`sum3-- ${sum3}`))
+    console.log((`sum4-- ${sum4}`))
+    return sum1 + sum2
+}
+// sum1和sum2是必须传入实参，sum3和sum4可选传入实参，如果没有传入实参就使用默认值
+test({sum1:1,sum2:2,sum3:3})
+```
+
 
 
 

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #box {
+            background-color: red;
+        }
+
+        .a1 {
+            width: 100px;
+            height: 100px;
+            /* Safari and Chrome */
+        }
+
+        .a2 {
+            transition: all 1s;
+            width: 200px;
+            transform: rotate(90deg);
+            
+        }
+    </style>
+</head>
+
+<body>
+    <button id="btn">anniu</button>
+    <div id="box" class="a1">撒大声地</div>
+
+    <script>
+        var btn = document.getElementById("btn")
+        var ist = false
+        btn.onclick = function () {
+            var box = document.getElementById("box")
+            // box.classList.add("a1")
+            ist = !ist
+            if (ist) {
+                box.classList.remove("a1")
+                box.classList.add("a2")
+            }else{
+                box.classList.remove("a2")
+                box.classList.add("a1")
+            }
+
+        }
+    </script>
+</body>
+
+</html>
