@@ -6,9 +6,9 @@
 //全局安装
 npm install -g webpack
 //安装到你的项目目录
-npm install --save -dev webpack
+npm install --save --only=dev webpack
 //安装webpack-cli
-npm install --save -dev webpack-cli
+npm install --save --only=dev webpack-cli
 ```
 
 ### 2，配置
@@ -24,12 +24,14 @@ npx webpack
 
 默认配置文件的名字  `webpack.config.js`
 
-```js
-// 直接使用npx webpack会寻找默认名字的配置文件
+```
+// 一，直接使用npx webpack会寻找默认名字的配置文件
 npx webpack
-// 使用 --config 指定对应的配置文件
+
+// 二，使用 --config 指定对应的配置文件
 npx webpack --config webpack.config.my.js
-//通过设置 package.json 中的脚本来执行命令
+
+// 三，通过设置 package.json 中的脚本来执行命令
 // 	1,在package.json的scripts中配置一条命令build
 	"scripts": {
     	"build": "webpack --webpack.config.my.js"
@@ -71,7 +73,17 @@ module.exports = {
 2. 启动`webpack-dev-server`
 
    ```js
+   // 一.直接使用命令行启动
    npx webpack-dev-server
+   // 二.通过设置 package.json 中的脚本来执行命令
+   ----------package.json--------
+     "scripts": {
+         // 1,在package.json的scripts中配置一条命令dev
+         //   	--open 可以让浏览器
+       "dev": "webpack-dev-server --open"
+     },
+    //	2,在命令行执行 dev 命令
+       npm run dev
    ```
 
 **配置`webpack-dev-server`**
@@ -202,11 +214,29 @@ module.exports = {
           //  cssloader -- 负责解析@import语法
           "css-loader",
           // 	把less转成css
-          // 需要安装 less和less-loader（less-loader调用）
+          // 需要安装 less 和less-loader（less-loader调用）
           // 		npm i less less-loader -d -s
           "less-loader"
         ]
-      }
+      },
+      {
+        test: /\.scss$/,
+        use: [
+        {
+            loader: "style-loader",
+            options: {
+            insertAt: "top"
+            }
+	    },
+    	//  cssloader -- 负责解析@import语法
+    	"css-loader",
+    	// 	把scss转成css
+    	// 需要安装 node-sass和sass-loader（less-loader调用）
+    	// 		npm i sass-loader -D -S
+        //		npm i node-sass -D -S
+    	"sass-loader"
+		]
+        }
     ]
   }
 }
@@ -356,9 +386,9 @@ module.exports = {
 1. 安装 babel-loader
 
 ```js
-npm i babel-loader @babel/core @babel/preset-env -s -d
+npm i babel-loader @babel/core @babel/preset-env -s -D
 // 解析es7的语法的插件
-npm i @babel/plugin-proposal-class-properties -s -d
+npm i @babel/plugin-proposal-class-properties -s -D
 ```
 
 2. 配置 webpack.config.js
@@ -375,7 +405,7 @@ module.exports = {
             presets: [
               // 引入 babel/preset-env 把es6转成es5
               '@babel/preset-env'
-            ]，
+            ],
             // 引入插件@babel/plugin-proposal-class-properties把es7转为es5
             plugins:[
               '@babel/plugin-proposal-class-properties'
@@ -390,9 +420,44 @@ module.exports = {
 
 
 
-安装
+### 7，处理图片字体等 url 路径
 
-```
-npm i @babel/plugin-proposal-class-properties -s -d
+1. 安装 url-loader 和 file-loader
+
+   ```
+   npm i url-loader file-loader -D
+   ```
+
+2. 配置 webpack.config.js
+
+   ```js
+   module.exports = {
+     module: {
+       rules: [
+         {
+           // 处理各种图片和字体文件
+           test: /\.(jpg|png|gif|bmp|jpeg|ttf|eot|svg|woff|woff2)$/,
+           // 不传入 limit 时，默认都会把图片解析成base64的格式
+           // 传入 limit为1024 后，图片只有小于1024b才会被解析成base64
+           // name属性作用为设置打包后图片的名称
+           // 		[hash:8] 代表8位的哈希值
+           //		[name] 代表源文件名称
+           // 		[ext] 代表源文件后缀
+           use: 'url-loader?limit=1024&name=[hash:8]-[name].[ext]'
+         }, 
+       ]
+     }
+   };
+   ```
+
+### 8，引入 node_modules 中的资源
+
+```js
+-------------index.js---------------------
+import './css/index.scss'
+// 引入 node_modules 中的文件时不需要添加 ./node_modules
+//      其会自动去 node_modules 中寻找
+import 'bootstrap/dist/css/bootstrap.css'
+console.log("index.js");
 ```
 

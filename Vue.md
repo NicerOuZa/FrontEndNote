@@ -1,5 +1,3 @@
-# 
-
 # 一，vue基础
 
 ### MVVM与MVC
@@ -336,10 +334,10 @@ Vue.directive('color-swatch', function (el, binding) {
             },
             //挂载子组件
             components:{
-                comment1:cm1
+                cm1
             },
             //父组件可以直接调用子组件
-            template:'<comment1></comment1>' 
+            template:'<cm1></cm1>' 
         });
 ```
 
@@ -357,7 +355,23 @@ Vue.component('button-counter', {
 });
 ```
 
-### 3，组件之间通信
+### 3，动态组件
+
+使用 Vue 提供的内置组件 `<component>` 的 is 特性来切换组件
+
+```html
+<!-- 组件会在 `currentTabComponent` 改变时改变 -->
+<component v-bind:is="currentTabComponent"></component>
+```
+
+在上述示例中，`currentTabComponent` 可以包括
+
+- 已注册组件的名字，或
+- 一个组件的选项对象
+
+
+
+### 4，组件之间通信
 
 **父组件向子组件传值**
 
@@ -622,7 +636,7 @@ Vue.component("A", {
 
 
 
-### 4，插槽（slot）的使用
+### 5，插槽（slot）的使用
 
 **插槽（slot） 是vue的一个内置的全局组件， 作为承载分发内容的出口**
 
@@ -691,7 +705,7 @@ Vue.component("A", {
 
 
 
-### 5，组件的生命周期
+### 6，组件的生命周期
 
 ![](img/lifecycle.png)
 
@@ -1301,6 +1315,7 @@ var UserParams = {
         // 由于子控件继承父控件
         // 可以直接通过 this 从子控件中获取到 router 对象和当前的 route 对象
         console.log(this.$router);
+        // $route 中包含参数对象（query和params）
         console.log(this.$route);
     },
 }
@@ -1379,8 +1394,9 @@ var UserQuery = {
                     path: "/home",
                     name: "home",
                     component: Home,
-                    // 定义 home 的子集路由
+                    // 使用 children 定义 home 的子集路由
                     children: [{
+                            // 注意这里的path前面不能有 '/' ，若有则是代表从根路径匹配
                             path: "song",
                             component: Song
                         },
@@ -1674,6 +1690,133 @@ var UserQuery = {
 </html>
 ```
 
+### 10，路由的重定向
+
+“重定向”的意思是，当用户访问 `/a`时，URL 将会被替换成 `/b`，然后匹配路由为 `/b`
+
+重定向也是通过 `routes` 配置来完成，下面例子是从 `/a` 重定向到 `/b`：
+
+```js
+const router = new VueRouter({
+  routes: [
+    { path: '/a', redirect: '/b' }
+  ]
+})
+```
+
+重定向的目标也可以是一个命名的路由：
+
+```js
+const router = new VueRouter({
+  routes: [
+    { path: '/a', redirect: { name: 'foo' }}
+  ]
+})
+```
+
+甚至是一个方法，动态返回重定向目标：
+
+```js
+const router = new VueRouter({
+  routes: [
+    { path: '/a', redirect: to => {
+      // 方法接收 目标路由 作为参数
+      // return 重定向的 字符串路径/路径对象
+    }}
+  ]
+})
+```
+
+### 11，给匹配成功的`<router-link>`设置样式
+
+当 `<router-link>` 对应的路由匹配成功，将自动设置 class 属性值 `.router-link-active`
+
+active-class
+
+- 类型: `string`
+
+- 默认值: `"router-link-active"`
+
+  设置 链接激活时使用的 CSS 类名。默认值可以通过路由的构造选项 `linkActiveClass` 来全局配置。
+
+  ```js
+  var myRouter = new VueRouter({
+      // 配置路由对象
+      routes: [
+          {
+              path: "/user",
+              name: "userQ",
+              component: UserQuery
+          }
+      ],
+      // 当 <router-link> 成功匹配会被设置名字为 myActive 的类，默认名为 router-link-active
+      linkActiveClass: "myActive"
+  })
+  ```
+
+  
+
+### 12，给路由加动画
+
+```html
+<div>
+    <router-link :to='{name:"userP",params:{id:10}}'>用户1</router-link>
+    <router-link :to='{name:"userQ",query:{userId:2}}'>用户2</router-link>
+    <!-- 给router-view加上transition即可 -->
+    <transition>
+        <router-view></router-view>
+    </transition>
+</div>
+```
+
+### 13，命名视图
+
+```html
+    <div id="app">
+        <!-- 使用 header 组件 -->
+        <router-view></router-view>
+        <!-- 使用 leftbox 组件 -->
+        <router-view name='left'></router-view>
+        <!-- 使用 mainbox 组件 -->
+        <router-view name='main'></router-view>
+    </div>
+
+    <script>
+        var header = {
+            template: "<div>我是header</div>",
+        }
+        var leftbox = {
+            template: "<div>我是leftbox</div>",
+        }
+        var mainbox = {
+            template: "<div>我是mainbox</div>",
+        }
+        var myRouter = new VueRouter({
+            routes: [{
+                path: "/",
+                // 使用components定义多个命名组件
+                //      router-view 路由默认使用 header 组件
+                //      router-view 匹配到对应名字（这里left和main）的组件则使用命名组件
+                components: {
+                    'default': header,
+                    'left': leftbox,
+                    'main': mainbox,
+                }
+            }]
+        })
+        var App = {
+            template: "#App",
+        }
+        var vm = new Vue({
+            el: "#app",
+            components: {
+                App
+            },
+            router: myRouter,
+        })
+    </script>
+```
+
 
 
 # 九，vue发起请求
@@ -1927,11 +2070,441 @@ methods: {
 
 推荐对于仅使用 JavaScript 过渡的元素添加 `v-bind:css="false"`，Vue 会跳过 CSS 的检测。这也可以避免过渡过程中 CSS 的影响。
 
-### [7，列表过渡](https://vuejs.bootcss.com/v2/guide/transitions.html#列表过渡)
+### 7，[初始渲染的过渡](https://vuejs.bootcss.com/v2/guide/transitions.html#初始渲染的过渡)
+
+可以通过 `appear` 特性设置节点在初始渲染的过渡
+
+```html
+<transition appear>  
+    <!-- ... -->
+</transition>
+```
+
+这里默认和进入/离开过渡一样，同样也可以自定义 CSS 类名。
+
+```html
+<transition
+  appear
+  appear-class="custom-appear-class"
+  appear-to-class="custom-appear-to-class" (2.1.8+)
+  appear-active-class="custom-appear-active-class"
+>
+  <!-- ... -->
+</transition>
+```
+
+自定义 JavaScript 钩子：
+
+```html
+<transition
+  appear
+  v-on:before-appear="customBeforeAppearHook"
+  v-on:appear="customAppearHook"
+  v-on:after-appear="customAfterAppearHook"
+  v-on:appear-cancelled="customAppearCancelledHook"
+>
+  <!-- ... -->
+</transition>
+```
+
+### [8，列表过渡](https://vuejs.bootcss.com/v2/guide/transitions.html#列表过渡)
 
 怎么同时渲染整个列表，比如使用 `v-for` ？在这种场景中，使用 `<transition-group>` 组件。在我们深入例子之前，先了解关于这个组件的几个特点：
 
 - 不同于 `<transition>`，它会以一个真实元素呈现：默认为一个 `<span>`。你也可以通过 `tag` 特性更换为其他元素。
 - [过渡模式](https://vuejs.bootcss.com/v2/guide/transitions.html#过渡模式)不可用，因为我们不再相互切换特有的元素。
 - 内部元素 **总是需要** 提供唯一的 `key` 属性值。
+
+
+
+### 9，[列表的排序过渡](https://vuejs.bootcss.com/v2/guide/transitions.html#列表的排序过渡)
+
+`<transition-group>` 组件还有一个特殊之处。不仅可以进入和离开动画，还可以改变定位。要使用这个新功能只需了解新增的 **v-move 特性**，它会在元素的改变定位的过程中应用。像之前的类名一样，可以通过 `name` 属性来自定义前缀，也可以通过 `move-class` 属性手动设置。
+
+`v-move` 对于设置过渡的切换时机和过渡曲线非常有用，你会看到如下的例子
+
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js"></script>
+
+<div id="flip-list-demo" class="demo">
+  <button v-on:click="shuffle">Shuffle</button>
+  <transition-group name="flip-list" tag="ul">   <!-- 这里使用 tag="ul"将transition-group渲染成ul -->
+    <li v-for="item in items" v-bind:key="item">
+      {{ item }}
+    </li>
+  </transition-group>
+</div>
+```
+
+```js
+new Vue({
+  el: '#flip-list-demo',
+  data: {
+    items: [1,2,3,4,5,6,7,8,9]
+  },
+  methods: {
+    shuffle: function () {
+      this.items = _.shuffle(this.items)
+    }
+  }
+})
+```
+
+```css
+.flip-list-move {
+  transition: transform 1s;
+}
+```
+
+这个看起来很神奇，内部的实现，Vue 使用了一个叫 [FLIP](https://aerotwist.com/blog/flip-your-animations/) 简单的动画队列
+使用 transforms 将元素从之前的位置平滑过渡新的位置。
+
+
+
+### 10，[多个组件的过渡](https://vuejs.bootcss.com/v2/guide/transitions.html#多个组件的过渡)
+
+多个组件的过渡简单很多 - 我们不需要使用 `key` 特性。相反，我们只需要使用[动态组件](https://vuejs.bootcss.com/v2/guide/components.html#动态组件)：
+
+```html
+<transition name="component-fade" mode="out-in">
+  <component v-bind:is="view"></component>
+</transition>
+```
+
+```js
+new Vue({
+  el: '#transition-components-demo',
+  data: {
+    view: 'v-a'
+  },
+  components: {
+    'v-a': {
+      template: '<div>Component A</div>'
+    },
+    'v-b': {
+      template: '<div>Component B</div>'
+    }
+  }
+})
+```
+
+```css
+.component-fade-enter-active, .component-fade-leave-active {
+  transition: opacity .3s ease;
+}
+.component-fade-enter, .component-fade-leave-to
+/* .component-fade-leave-active for below version 2.1.8 */ {
+  opacity: 0;
+}
+```
+
+### 11，过渡模式
+
+同时生效的进入和离开的过渡不能满足所有要求，所以 Vue 提供了 **过渡模式**
+
+- `in-out`：新元素先进行过渡，完成之后当前元素过渡离开。
+- `out-in`：当前元素先进行过渡，完成之后新元素过渡进入。
+
+用 `out-in` 重写之前的开关按钮过渡：
+
+```html
+<transition name="fade" mode="out-in">
+  <!-- ... the buttons ... -->
+</transition>
+```
+
+
+
+
+
+# 十一，vue结合webpack
+
+### 1，render 函数的使用
+
+```html
+<body>
+    <div id="app"></div>
+
+    <script>
+        var header = {
+            template: "<div>我是header</div>",
+        }
+
+        var vm = new Vue({
+            el: "#app",
+            // 形参 creatElements 是一个方法
+            // 调用 creatElements能够把指定的组件模板渲染为 html 结构
+            render: function (creatElements) {
+                // 这里 return 的结果，会替换页面中 el 指定的容器
+                return creatElements(header)
+            }
+        })
+    </script>
+</body>
+```
+
+### 2，修改默认导入的vue文件的方式
+
+```js
+// 在 webpack 中尝试使用 Vue:
+
+// 注意：在 webpack 中，使用 import Vue from 'vue' 导入的 Vue 构造函数功能不完整，
+//  只提供了 runtime-only 的方式，并没有提供向网页那样的使用方式；
+import Vue from 'vue'
+/**
+ * 包的查找规则
+ *      1.找项目跟目录有没有 node_modules 的文件夹
+ *      2.在 node_modules 中，根据包名，找到对应的 vue 文件夹
+ *      3.在 vue 文件夹中，找到 package.json 包配置文件
+ *      4.在 package.json 中，查找一个 main 属性（main属性指定了这个包在被加载时候的入口文件）
+ *  */ 
+// 由于 main 属性指向 vue.runtime.common.js 文件而不是 vue.js 所以上面的导入方式只提供了 runtime-only 的方式
+```
+
+**方式一：**
+
+```js
+// 想要导入 vue.js 需要手动指向其路径
+import Vue from '../node_modules/vue/dist/vue.js'
+```
+
+**方式二：**
+
+```js
+---------------------webpack.config.js---------------------
+module.exports = {
+    resolve:{
+        // 设置 Vue 被导入时候的包的路径
+        //  再使用 import Vue from 'vue' 就会导入 vue.js 文件了
+        alias:{
+            "vue$": "vue/dist/vue.js"
+        }
+    }
+}
+```
+
+### 3，*.vue 文件形式的组件的使用
+
+1. 写一个`.vue`文件
+
+   ```vue
+   -----------------login.vue----------
+   <template>
+       <div>
+           <h1>这是登录组件</h1>
+       </div>
+   </template>
+   
+   
+   <script>
+   export default {
+       
+   }
+   </script>
+   
+   
+   <style>
+   
+   </style>
+   ```
+
+2. 导入 vue 组件
+
+   ```js
+   // 导入 login 组件
+   import login from './login.vue'
+   ```
+
+3. 安装 loder 配置 webpack.config.js 文件
+
+   1. 安装 loader
+
+      ```
+      npm i vue-loader vue-template-compiler -D
+      ```
+
+   2. 配置 webpack.config.js 文件
+
+      ```js
+      const VueLoaderPlugin = require('vue-loader/lib/plugin')
+      module.exports = {
+          // 配置 vueloader 的插件
+          plugins: [
+              new VueLoaderPlugin()
+          ],
+          module: {
+              // 配置 .vue 文件的 loader
+              rules: [
+                  { test: /\.vue$/, use: 'vue-loader' }
+              ]
+          }
+      }
+      ```
+   
+4. 使用 render 函数将组件渲染到页面上
+
+   ```js
+   import Vue from 'vue'
+   import login from './login.vue'
+   
+   var vm = new Vue({
+       el:'#app',
+       // 把 login 组件渲染到 #app 上
+       render(h) {
+           return h(login)
+       },
+   })
+   ```
+
+
+
+### 4，*.vue 文件详解
+
+```vue
+<template>
+    <div >
+        <h1>这是登录组件---{{msg}}</h1>
+    </div>
+</template>
+
+/**
+    在 node 中 
+        向外暴露成员的方式：module.exports = {} 和 exports
+    在 ES6 中，也通过规范的形式，规定了ES6中如何导入和导出模块
+        导入模块的方式：
+            import 模块名称 from '模块标识符'   
+            import '路径'
+        导出（向外暴露成员）方式:：
+            export default {} 和 export
+ */
+// 这里使用 ES6 暴露成员的方式来定义组件的数据和方法等
+<script>
+export default {
+    data() {
+        return {
+            msg:123
+        }
+    },
+    methods: {
+        show(){
+            console.log("调用了show");
+        }
+    },
+}
+</script>
+
+// 注意：
+//	1，一般style标签要加 scoped 属性，否则每个组件的样式都是全局样式，加上 scoped 后，样式只能作用于本组件
+//	2，不加 lang 属性默认只支持 css 语法，指定 lang 属性为 scss 等可以支持扩展语法
+<style scoped lang='scss'>
+    h1{
+        background-color: antiquewhite
+    }
+</style>
+```
+
+### 5，结合vue-router的使用
+
+1. 引入`vue-router`的
+   + 如果在一个模块化工程中使用它，必须通过`Vue.use()`明确地安装路由功能
+	
+	```js
+	// 先安装 vue-router的包   npm i vue-router -S
+	import Vue from 'vue'
+	import VueRouter from 'vue-router'
+	
+	Vue.use(VueRouter)
+	
+	import App from './App.vue'
+	// 引入组件
+	import account from './main/Account.vue'
+	import goodslist from './main/GoodsList.vue'
+	
+	
+	
+	// 创建一个路由对象
+	var router = new VueRouter({
+	    routes: [
+	        { path: '/account', component: account},
+	        { path: '/goodslist', component: goodslist},
+	    ]
+	})
+	
+	var vm = new Vue({
+	    el: '#app',
+	    // 把路由对象挂载到 Vue 对象上
+	    router,
+	    render(h) {
+	        return h(App)
+	    },
+	})
+	```
+	
+	```vue
+	--------------App.vue------------------
+	<template>
+	    <div >
+	        <h1>我是App</h1>
+	        <router-link to='/account'>account</router-link>
+	        <router-link to='/goodslist'>goodslist</router-link>
+	        <router-view></router-view>
+	    </div>
+	</template>
+	```
+
+
+
+### 6，抽离路由模块
+
+```js
+-----------------main.js----------------
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+Vue.use(VueRouter)
+
+import App from './App.vue'
+
+// 引入 router.js 暴露的路由对象
+import {router} from './router'
+
+
+var vm = new Vue({
+    el: '#app',
+    // 把路由对象挂载到 Vue 对象上
+    router,
+    render(h) {
+        return h(App)
+    },
+})
+```
+
+```js
+--------------------router.js--------------------
+import VueRouter from 'vue-router'
+
+// 引入组件
+import account from './main/Account.vue'
+import goodslist from './main/GoodsList.vue'
+import login from './subcom/Login.vue'
+import register from './subcom/Register.vue'
+
+
+// 创建一个路由对象
+// 暴露导出路由模块
+export var router = new VueRouter({
+    routes: [
+        {
+            path: '/account',
+            component: account,
+            children: [
+                { path: 'login', component: login },
+                { path: 'register', component: register }
+            ]
+        },
+        { path: '/goodslist', component: goodslist },
+    ]
+})
+```
+
+
 
