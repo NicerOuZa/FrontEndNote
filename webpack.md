@@ -67,7 +67,7 @@ module.exports = {
 1. 安装`webpack-dev-server`
 
    ```js
-   npm i webpack-dev-server -s -d
+   npm i webpack-dev-server -D
    ```
 
 2. 启动`webpack-dev-server`
@@ -110,7 +110,7 @@ module.exports = {
 1. 安装
 
    ```js
-   npm i html-webpack-plugin -D -s
+   npm i html-webpack-plugin -D
    ```
 
 2. 配置插件
@@ -386,9 +386,9 @@ module.exports = {
 1. 安装 babel-loader
 
 ```js
-npm i babel-loader @babel/core @babel/preset-env -s -D
+npm i babel-loader @babel/core @babel/preset-env -D
 // 解析es7的语法的插件
-npm i @babel/plugin-proposal-class-properties -s -D
+npm i @babel/plugin-proposal-class-properties -D
 ```
 
 2. 配置 webpack.config.js

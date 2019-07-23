@@ -31,11 +31,19 @@ require("./Test.js");
      *      exports默认是一个空对象
      *      在exports中传入值就可以实现文件模块之间的通信
      */
-      var ret = require("./Test.js")
-      console.log(ret);
-      ----------------------------------Test.js中的内容----------------------------------
+      var ret1 = require("./Test1.js")
+      var ret2 = require("./Test2.js")
+      console.log(ret1); // {foot1: 1, foot2: 2}
+      console.log(ret2); // {foot1: 1, foot2: 2}
+      ----------------------------------Test1.js中的内容----------------------------------
       console.log("test被加载了");
-      exports.foot = 1;
+      exports.foot1 = 1;
+      exports.foot2 = 2; 
+      ----------------------------------Test2.js中的内容----------------------------------
+        module.exports = {
+          foot1:1,
+          foot2:2
+        }
     ```
   
 
