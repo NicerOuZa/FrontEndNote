@@ -1,27 +1,15 @@
-import Vue from 'vue'
+import Vue from "vue";
+import App from "./App";
 
-import MintUI from 'mint-ui'
-import 'mint-ui/lib/style.css'
+import router from "./router";
 
-import iView from 'iview';
-import 'iview/dist/styles/iview.css';
+import store from "./store";
 
-import App from './App.vue'
-import re from './subcom/Register.vue'
-import lo from './subcom/Login.vue'
-
-
-
-Vue.use(MintUI)
-Vue.use(iView)
-
-Vue.component('re', re)
-Vue.component('lo', lo)
-
-var vm = new Vue({
-    el: '#app',
-    render(h) {
-        return h(App)
-    },
-})
-
+new Vue({
+  el: "#app",
+  router,
+  store,
+  render(h) {
+    return h(App);
+  }
+});

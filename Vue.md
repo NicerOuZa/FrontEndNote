@@ -1,4 +1,4 @@
-# 一，vue基础
+# 一，Vue基础
 
 ### MVVM与MVC
 
@@ -81,7 +81,7 @@
 
 
 
-# 二，vue的指令系统
+# 二，Vue的指令系统
 
 ### 1, 数据渲染（声明式渲染）
 
@@ -306,7 +306,7 @@ Vue.directive('color-swatch', function (el, binding) {
 
 
 
-#  三，vue组件
+#  三，Vue组件
 
 ### 1，局部组件的简单使用
 
@@ -372,6 +372,10 @@ Vue.component('button-counter', {
 
 
 ### 4，组件之间通信
+
+#### [Prop的使用](https://vuejs.bootcss.com/v2/guide/components-props.html)
+
+#### [自定义事件](https://vuejs.bootcss.com/v2/guide/components-custom-events.html)
 
 **父组件向子组件传值**
 
@@ -636,7 +640,7 @@ Vue.component("A", {
 
 
 
-### 5，插槽（slot）的使用
+### 5，[插槽（slot）的使用](https://vuejs.bootcss.com/v2/guide/components-slots.html)
 
 **插槽（slot） 是vue的一个内置的全局组件， 作为承载分发内容的出口**
 
@@ -892,7 +896,7 @@ Vue.component("A", {
     </script>
 ```
 
-# 五，vue监听器（watch）
+# 五，Vue监听器（watch）
 
 <h3>监视属性： 通过vm对象的$watch() 或 watch配置来监听指定的属性，当属性变化时，回调函数自动调用。</h3>
 - watch监听的是单个属性
@@ -1221,7 +1225,7 @@ Vue.component("A", {
 </html>
 ```
 
-### 3，利用路由对象的 name 来使用路由
+### 3，[命名路由](https://router.vuejs.org/zh/guide/essentials/named-routes.html)
 
 ```javascript
  var myRouter = new VueRouter({
@@ -1308,6 +1312,10 @@ Vue.component("A", {
 
 ### 5，子控件获取路由参数
 
+`$route`是当前的**路由对象 (route object)**
+
+**路由对象 (route object)** 表示当前激活的路由的状态信息，包含了当前 URL 解析得到的信息，还有 URL 匹配到的**路由记录 (route records)**。
+
 ```js
 var UserParams = {
     template: `<div><h1>我是UserParams</h1></div>`,
@@ -1329,7 +1337,7 @@ var UserQuery = {
 }
 ```
 
-### 6，嵌套路由
+### 6，[嵌套路由](https://router.vuejs.org/zh/guide/essentials/nested-routes.html)
 
 ```html
 <!DOCTYPE html>
@@ -1429,7 +1437,7 @@ var UserQuery = {
 </html>
 ```
 
-### 7，动态路由匹配
+### 7，[动态路由匹配](https://router.vuejs.org/zh/guide/essentials/dynamic-matching.html)
 
 ```html
 <!DOCTYPE html>
@@ -1543,6 +1551,12 @@ var UserQuery = {
 
 ### 8, keep-alive 的使用
 
+`<keep-alive>` 包裹动态组件时，会缓存不活动的组件实例，而不是销毁它们。和 `<transition>` 相似，`<keep-alive>` 是一个抽象组件：它自身不会渲染一个 DOM 元素，也不会出现在父组件链中。
+
+当组件在 `<keep-alive>` 内被切换，它的 `activated` 和 `deactivated` 这两个生命周期钩子函数将会被对应执行。
+
+> 在 2.2.0 及其更高版本中，`activated` 和 `deactivated` 将会在 `<keep-alive>`树内的所有嵌套组件中触发。
+
 ```html
 <div>
     <router-link :to='{name:"timeline"}'>首页</router-link>
@@ -1557,7 +1571,246 @@ var UserQuery = {
 </div>
 ```
 
-### 9，路由元信息
+**keep-alive 中的属性**
+
++ **include and exclude**
+
+  + 条件(下面示例中的 a 和 b)是组件的`name`属性，即`include='a,b'`表示只对`name`为 a 和 b 的组件进行缓存，`exclude='a,b'`表示对除了`name`为 a 和 b 的组件进行缓存
+
+  + `include` 和 `exclude` 属性允许组件有条件地缓存。二者都可以用逗号分隔字符串、正则表达式或一个数组来表示
+
+  ```html
+  <!-- 逗号分隔字符串 -->
+  <keep-alive include="a,b">
+    <component :is="view"></component>
+  </keep-alive>
+  
+  <!-- 正则表达式 (使用 `v-bind`) -->
+  <keep-alive :include="/a|b/">
+    <component :is="view"></component>
+  </keep-alive>
+  
+  <!-- 数组 (使用 `v-bind`) -->
+  <keep-alive :include="['a', 'b']">
+    <component :is="view"></component>
+  </keep-alive>
+  ```
+
++ **max**
+
+  最多可以缓存多少组件实例。一旦这个数字达到了，在新实例被创建之前，已缓存组件中最久没有被访问的实例会被销毁掉
+
+  ```html
+  <keep-alive :max="10">
+    <component :is="view"></component>
+  </keep-alive>
+  ```
+
+  
+
+### 9，[编程式的导航](https://router.vuejs.org/zh/guide/essentials/navigation.html)
+
+| 声明式                            | 编程式                |
+| --------------------------------- | --------------------- |
+| `<router-link :to="...">`         | `router.push(...)`    |
+| `<router-link :to="..." replace>` | `router.replace(...)` |
+| -----                             | `router.go(n)`        |
+
+
+
+### 10，命名视图
+
+```html
+    <div id="app">
+        <!-- 使用 header 组件 -->
+        <router-view></router-view>
+        <!-- 使用 leftbox 组件 -->
+        <router-view name='left'></router-view>
+        <!-- 使用 mainbox 组件 -->
+        <router-view name='main'></router-view>
+    </div>
+
+    <script>
+        var header = {
+            template: "<div>我是header</div>",
+        }
+        var leftbox = {
+            template: "<div>我是leftbox</div>",
+        }
+        var mainbox = {
+            template: "<div>我是mainbox</div>",
+        }
+        var myRouter = new VueRouter({
+            routes: [{
+                path: "/",
+                // 使用components定义多个命名组件
+                //      router-view 路由默认使用 header 组件
+                //      router-view 匹配到对应名字（这里left和main）的组件则使用命名组件
+                components: {
+                    'default': header,
+                    'left': leftbox,
+                    'main': mainbox,
+                }
+            }]
+        })
+        var App = {
+            template: "#App",
+        }
+        var vm = new Vue({
+            el: "#app",
+            components: {
+                App
+            },
+            router: myRouter,
+        })
+    </script>
+```
+
+
+
+### 11，[导航守卫](https://router.vuejs.org/zh/guide/advanced/navigation-guards.html)
+
+1. 全局前置守卫
+
+   ```js
+   const router = new VueRouter({ ... })
+   
+   router.beforeEach((to, from, next) => {
+     // ...
+   })
+   ```
+
+2. 全局解析守卫
+
+   ```js
+   const router = new VueRouter({ ... })
+                                 
+   router.beforeResolve((to, from, next) => {
+     /* must call `next` */
+   })
+   ```
+
+3. 全局后置钩子
+
+   ```js
+   const router = new VueRouter({ ... })
+   
+   router.afterEach((to, from) => {
+     // ...
+   })
+   ```
+
+4. 路由独享的守卫
+
+   ```js
+   const router = new VueRouter({
+     routes: [
+       {
+         path: '/foo',
+         component: Foo,
+         beforeEnter: (to, from, next) => {
+           // ...
+         }
+       }
+     ]
+   })
+   ```
+
+5. 组件内的守卫
+
+   ```js
+   const Foo = {
+     template: `...`,
+     beforeRouteEnter (to, from, next) {
+       // 在渲染该组件的对应路由被 confirm 前调用
+       // 不！能！获取组件实例 `this`
+       // 因为当守卫执行前，组件实例还没被创建
+       // 不过，你可以通过传一个回调给 next来访问组件实例。在导航被确认的时候执行回调，并且把组件实例作为回调方法的参数。
+         next(vm => {
+       	// 通过 `vm` 访问组件实例
+     		})
+     },
+     beforeRouteUpdate (to, from, next) {
+       // 在当前路由改变，但是该组件被复用时调用
+       // 举例来说，对于一个带有动态参数的路径 /foo/:id，在 /foo/1 和 /foo/2 之间跳转的时候，
+       // 由于会渲染同样的 Foo 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。
+       // 可以访问组件实例 `this`
+     },
+     beforeRouteLeave (to, from, next) {
+       // 导航离开该组件的对应路由时调用
+       // 可以访问组件实例 `this`
+     }
+   }
+   
+   
+   ```
+
+**完整的导航解析流程**
+
+1. 导航被触发。
+2. 在失活的组件里调用离开守卫。
+3. 调用全局的 `beforeEach` 守卫。
+4. 在重用的组件里调用 `beforeRouteUpdate` 守卫 (2.2+)。
+5. 在路由配置里调用 `beforeEnter`。
+6. 解析异步路由组件。
+7. 在被激活的组件里调用 `beforeRouteEnter`。
+8. 调用全局的 `beforeResolve` 守卫 (2.5+)。
+9. 导航被确认。
+10. 调用全局的 `afterEach` 钩子。
+11. 触发 DOM 更新。
+12. 用创建好的实例调用 `beforeRouteEnter` 守卫中传给 `next` 的回调函数。
+
+### 12，[路由元信息](https://router.vuejs.org/zh/guide/advanced/meta.html)
+
+定义路由的时候可以配置 `meta` 字段：
+
+```js
+const router = new VueRouter({
+  routes: [
+    {
+      path: '/foo',
+      component: Foo,
+      children: [
+        {
+          path: 'bar',
+          component: Bar,
+          // a meta field
+          meta: { requiresAuth: true }
+        }
+      ]
+    }
+  ]
+})
+```
+
+那么如何访问这个 `meta` 字段呢？
+
+首先，我们称呼 `routes` 配置中的每个路由对象为 **路由记录**。路由记录可以是嵌套的，因此，当一个路由匹配成功后，他可能匹配多个路由记录
+
+例如，根据上面的路由配置，`/foo/bar` 这个 URL 将会匹配父路由记录以及子路由记录。
+
+一个路由匹配到的所有路由记录会暴露为 `$route` 对象 (还有在导航守卫中的路由对象) 的 `$route.matched` 数组。因此，我们需要遍历 `$route.matched` 来检查路由记录中的 `meta` 字段。
+
+下面例子展示在全局导航守卫中检查元字段：
+
+```js
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // this route requires auth, check if logged in
+    // if not, redirect to login page.
+    if (!auth.loggedIn()) {
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+    } else {
+      next()
+    }
+  } else {
+    next() // 确保一定要调用 next()
+  }
+})
+```
 
 ​	**利用路由元信息进行权限验证**
 
@@ -1690,7 +1943,11 @@ var UserQuery = {
 </html>
 ```
 
-### 10，路由的重定向
+
+
+
+
+### 13，路由的重定向
 
 “重定向”的意思是，当用户访问 `/a`时，URL 将会被替换成 `/b`，然后匹配路由为 `/b`
 
@@ -1727,7 +1984,7 @@ const router = new VueRouter({
 })
 ```
 
-### 11，给匹配成功的`<router-link>`设置样式
+### 14，给匹配成功的`<router-link>`设置样式
 
 当 `<router-link>` 对应的路由匹配成功，将自动设置 class 属性值 `.router-link-active`
 
@@ -1756,7 +2013,7 @@ active-class
 
   
 
-### 12，给路由加动画
+### 15，给路由加动画
 
 ```html
 <div>
@@ -1769,57 +2026,9 @@ active-class
 </div>
 ```
 
-### 13，命名视图
-
-```html
-    <div id="app">
-        <!-- 使用 header 组件 -->
-        <router-view></router-view>
-        <!-- 使用 leftbox 组件 -->
-        <router-view name='left'></router-view>
-        <!-- 使用 mainbox 组件 -->
-        <router-view name='main'></router-view>
-    </div>
-
-    <script>
-        var header = {
-            template: "<div>我是header</div>",
-        }
-        var leftbox = {
-            template: "<div>我是leftbox</div>",
-        }
-        var mainbox = {
-            template: "<div>我是mainbox</div>",
-        }
-        var myRouter = new VueRouter({
-            routes: [{
-                path: "/",
-                // 使用components定义多个命名组件
-                //      router-view 路由默认使用 header 组件
-                //      router-view 匹配到对应名字（这里left和main）的组件则使用命名组件
-                components: {
-                    'default': header,
-                    'left': leftbox,
-                    'main': mainbox,
-                }
-            }]
-        })
-        var App = {
-            template: "#App",
-        }
-        var vm = new Vue({
-            el: "#app",
-            components: {
-                App
-            },
-            router: myRouter,
-        })
-    </script>
-```
 
 
-
-# 九，vue发起请求
+# 九，Vue发起请求
 
 ### 1，[使用vue-resource发起请求](https://github.com/pagekit/vue-resource)
 
@@ -1864,7 +2073,7 @@ var vm = new Vue({
 
 
 
-# 十，[vue中的动画](https://vuejs.bootcss.com/v2/guide/transitions.html)
+# 十，[Vue中的动画](https://vuejs.bootcss.com/v2/guide/transitions.html)
 
 
 
@@ -2217,7 +2426,9 @@ new Vue({
 
 
 
-# 十一，vue结合webpack
+# 十一，Vue结合webpack
+
+## [Vue-Load](https://vue-loader.vuejs.org/)
 
 ### 1，render 函数的使用
 
@@ -2317,7 +2528,7 @@ module.exports = {
 
 3. 安装 loder 配置 webpack.config.js 文件
 
-   1. 安装 loader
+   1. 安装 vue-loader 和 vue-template-compiler
 
       ```
       npm i vue-loader vue-template-compiler -D
@@ -2397,9 +2608,23 @@ export default {
 //	1，一般style标签要加 scoped 属性，否则每个组件的样式都是全局样式，加上 scoped 后，样式只能作用于本组件
 //	2，不加 lang 属性默认只支持 css 语法，指定 lang 属性为 scss 等可以支持扩展语法
 <style scoped lang='scss'>
+    /** 样式文件中使用 @import 来引用*/
+    @import './base.scss';
     h1{
         background-color: antiquewhite
     }
+</style>
+```
+
+可以在一个组件中同时使用有 scoped 和非 scoped 样式：
+
+```html
+<style>
+/* 全局样式 */
+</style>
+
+<style scoped>
+/* 本地样式 */
 </style>
 ```
 
@@ -2451,59 +2676,146 @@ export default {
 	    </div>
 	</template>
 	```
+	
+2. 抽离路由模块
 
+   ```js
+   -----------------main.js----------------
+   import Vue from 'vue'
+   import VueRouter from 'vue-router'
+   Vue.use(VueRouter)
+   
+   import App from './App.vue'
+   
+   // 引入 router.js 暴露的路由对象
+   import {router} from './router'
+   
+   
+   var vm = new Vue({
+       el: '#app',
+       // 把路由对象挂载到 Vue 对象上
+       router,
+       render(h) {
+           return h(App)
+       },
+   })
+   ```
 
+   ```js
+   --------------------router.js--------------------
+   import VueRouter from 'vue-router'
+   
+   // 引入组件
+   import account from './main/Account.vue'
+   import goodslist from './main/GoodsList.vue'
+   import login from './subcom/Login.vue'
+   import register from './subcom/Register.vue'
+   
+   
+   // 创建一个路由对象
+   // 暴露导出路由模块
+   export var router = new VueRouter({
+       routes: [
+           {
+               path: '/account',
+               component: account,
+               children: [
+                   { path: 'login', component: login },
+                   { path: 'register', component: register }
+               ]
+           },
+           { path: '/goodslist', component: goodslist },
+       ]
+   })
+   ```
 
-### 6，抽离路由模块
+### 6，文件路径引用问题
+
+配置 webpack.config.js 文件
 
 ```js
------------------main.js----------------
+
+module.exports = {
+  resolve: {
+    /**
+      通过给 extensions 添加后缀名，项目中引入文件可以省略后缀名
+      如引入vue组件 ：import Account from "./main/Account.vue";
+      在 extensions 添加了 .vue后就可以省略后缀名，即import Account from "./main/Account";
+    */
+    extensions: [".vue", ".js"],
+    /**
+      下面的 alias 给路径设置别名
+      然后使用 
+		- @src就可以指向到/src/ 
+		- @component指向到/src/component/
+	  使用别名
+	  	import LifeCycle from "@pages/lifecycle/lifecycle"
+		import stateProp from "@pages/stateProp/stateProp"
+		import Home from "@pages/home/home"
+    */
+     alias: {
+          "@src":path.resolve("src"),
+          "@component":path.resolve("src/component"),
+          "@pages":path.resolve("src/pages"),
+          "@utils":path.resolve("src/utils"),
+        },
+  },
+}
+```
+
+
+
+## [Vue-CLI](https://cli.vuejs.org/zh/)
+
+
+
+# 十二，[Vuex](https://vuex.vuejs.org/zh/)
+
+### 1，安装和基本使用
+
+使用 Npm
+
+```shell
+npm install vuex --save
+```
+
+在一个模块化的打包系统中，您必须显式地通过 `Vue.use()` 来安装 Vuex：
+
+```js
 import Vue from 'vue'
-import VueRouter from 'vue-router'
-Vue.use(VueRouter)
+import Vuex from 'vuex'
 
-import App from './App.vue'
+Vue.use(Vuex)
+```
 
-// 引入 router.js 暴露的路由对象
-import {router} from './router'
+创建一个 Vuex.Store 对象
 
-
-var vm = new Vue({
-    el: '#app',
-    // 把路由对象挂载到 Vue 对象上
-    router,
-    render(h) {
-        return h(App)
-    },
+```js
+export const store = new Vuex.Store({
+  state: {
+    count: 0
+  },
+  mutations: {
+    increment(state) {
+      state.count++;
+    }
+  }
 })
 ```
 
+把创建的 store 对象放入  Vue 对象中
+
 ```js
---------------------router.js--------------------
-import VueRouter from 'vue-router'
+import { store } from './store/main.store'
 
-// 引入组件
-import account from './main/Account.vue'
-import goodslist from './main/GoodsList.vue'
-import login from './subcom/Login.vue'
-import register from './subcom/Register.vue'
-
-
-// 创建一个路由对象
-// 暴露导出路由模块
-export var router = new VueRouter({
-    routes: [
-        {
-            path: '/account',
-            component: account,
-            children: [
-                { path: 'login', component: login },
-                { path: 'register', component: register }
-            ]
-        },
-        { path: '/goodslist', component: goodslist },
-    ]
-})
+new Vue({
+  el: "#app",
+  router,
+  store,
+  render(h) {
+    return h(App);
+  }
+});
 ```
 
 

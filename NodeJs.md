@@ -27,12 +27,14 @@ require("./Test.js");
      * require 方法有两个作用
      *      1，就是加载文件并执行里面的代码
      *      2，拿到被加载文件模块导出的接口对象（即require的返回值是对应文件模块的exports对象）
-     * 每一个文件模块都提供了一个对象exports
-     *      exports默认是一个空对象
-     *      在exports中传入值就可以实现文件模块之间的通信
+     * 每一个文件模块都提供了一个对象module.exports
+     *      module.exports默认是一个空对象
+     *      在module.exports中传入值就可以实现文件模块之间的通信
+     *	    exports 是 module.exports 的引用（所以直接给exports赋值不管用，只能给exports添加属性）
      */
       var ret1 = require("./Test1.js")
-      var ret2 = require("./Test2.js")
+      // 可以省略 '.js' 后缀
+      var ret2 = require("./Test2")
       console.log(ret1); // {foot1: 1, foot2: 2}
       console.log(ret2); // {foot1: 1, foot2: 2}
       ----------------------------------Test1.js中的内容----------------------------------
@@ -40,7 +42,7 @@ require("./Test.js");
       exports.foot1 = 1;
       exports.foot2 = 2; 
       ----------------------------------Test2.js中的内容----------------------------------
-        module.exports = {
+    	module.exports = {
           foot1:1,
           foot2:2
         }
@@ -105,8 +107,15 @@ fs.writeFile("test>.txt","我是node.js",function (error) {
 
 
 ---------------------------------------------------------------
-    //读取文件夹
-    
+//读取文件夹
+    // 读取文件夹 F5_node 
+    // files 是一个由 F5_node 里面的文件名组成的数组
+fs.readdir("D:/Code/F5_node", function (error, files) {
+    if (error) {
+        return response.end("errorMsg: " + error)
+    }
+    response.end(files)
+})
 ```
 
 ### 2，最简单的http服务
@@ -185,7 +194,7 @@ server.on("request", function (request, response) {
         'Content-Type': 'text/html;charset=utf-8'
     }); 
     
-    response.end("你好世界");
+    response.end("hello world");
 });
 ----------------------------------------------------------------
 // 比如发送图片前，可以指定Content-Type为image/jpeg
@@ -196,4 +205,145 @@ fs.readFile("./resource/main.png", function (error, data) {
     response.end(data);
 });
 ```
+
+
+
+### 5，处理静态资源
+
+**html在浏览器加载静态资源的路径问题**
+
+```html
+    <div>
+        <!-- 在路径前面直接写 '/' 在浏览器中代表根路径 -->
+        <!-- 如果是服务器加载，就是服务器根路径，即 'http://localhost:8080/public/img/a1.png' -->
+        <!-- 如果是文件加载，就是盘符根路径 ， 即 'file:///D:/public/img/a1.png'-->
+        <img src="/public/img/a1.png" alt="没有找到">
+    </div>
+```
+
+**使用nodejs加载页面的静态资源的处理方案**
+
+```js
+const http = require('http')
+const fs = require('fs')
+
+http
+    .createServer(function (req, res) {
+        const url = req.url
+        if (url === '/') {
+            fs.readFile('./pages/index.html', function (err, data) {
+                if (err) {
+                    res.end('404 Not Found')
+                }
+                res.end(data)
+            })
+        } else if (url.indexOf("/public/") === 0) {
+            // 约定静态资源放在 public 文件夹里
+            // 通过出口 url 开头为 '/public/' 来读取静态资源然后返回给浏览器
+
+
+            // 这里要在 url 前面加上 '.' 即 ./public/xxx 表示当前目录
+            //      如果不加，即 /public/xxx 表示的是磁盘根目录
+            fs.readFile('.' + url, function (err, data) {
+                // 把文件数据发送给客户端
+                res.end(data)
+            })
+
+        }
+
+    })
+    .listen(5000, function () {
+        console.log("服务器启动成功！")
+        console.log("端口号：5000")
+    })
+```
+
+### 6，解析 url 
+
+```js
+// 引入 url 包
+const Url = require('url')
+
+console.log(Url.parse("http://localhost:5000/comment?name=zt&id=1"));
+/**
+  Url {
+  protocol: 'http:',
+  slashes: true,
+  auth: null,
+  host: 'localhost:5000',
+  port: '5000',
+  hostname: 'localhost',
+  hash: null,
+  search: '?name=zt&id=1',
+  query: 'name=zt&id=1',
+  pathname: '/comment',
+  path: '/comment?name=zt&id=1',
+  href: 'http://localhost:5000/comment?name=zt&id=1'
+}
+ */
+
+// 传入第二给参数 true 后，会把 query 解析成对象
+console.log(Url.parse("http://localhost:5000/comment?name=zt&id=1",true));
+/**
+  Url {
+  protocol: 'http:',
+  slashes: true,
+  auth: null,
+  host: 'localhost:5000',
+  port: '5000',
+  hostname: 'localhost',
+  hash: null,
+  search: '?name=zt&id=1',
+  query: [Object: null prototype] { name: 'zt', id: '1' },
+  pathname: '/comment',
+  path: '/comment?name=zt&id=1',
+  href: 'http://localhost:5000/comment?name=zt&id=1'
+}
+ */
+```
+
+### 7，重定向
+
+重定向就是将网页自动转向重定向，即：
+
+- **301永久性重定向**：在磁盘中进行存储，永久进行重定向
+  - 301重定向是永久的重定向，搜索引擎在抓取新内容的同时也将旧的网址交换为重定向之后的网址。
+- **302临时性重定向**
+  - 302重定向是暂时的重定向，搜索引擎会抓取新的内容而保存旧的网址。由于效劳器前往302代码，搜索引擎以为新的网址只是暂时的
+
+```js
+const http = require('http')
+
+http
+    .createServer(function (req, res) {
+        
+        let urlObj = Url.parse(req.url, true)
+        pathName = urlObj.pathname
+
+        if (pathName === '/') {
+            fs.readFile('./pages/test.html', function (err, data) {
+                if (err) {
+                    res.end('404 Not Found')
+                }
+                res.end(data)
+            })
+        }else if(pathName.indexOf('/test1') === 0){
+            // 把 '/test1' 重定向到 '/'
+            // 		先把 statusCode 设置为 302
+            //		再用 setHeader 重定向到 '/'
+            res.statusCode = 302
+            res.setHeader('Location', '/')
+            res.end()
+        }
+
+    })
+    .listen(5000, function () {
+        console.log("服务器启动成功！")
+        console.log("端口号：5000")
+    })
+```
+
+
+
+
 

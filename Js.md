@@ -1,27 +1,3 @@
-# Array 对象
-
-### 对象方法
-
-#### 1，map
-
-#### 2，join
-
-# window 对象
-
-### 对象方法
-
-#### 1，setTimeout
-
-function setTimeout(handler: TimerHandler, timeout?: number, ...arguments: any[]): number
-
-### 1，setInterval
-
-function setInterval(handler: TimerHandler, timeout?: number, ...arguments: any[]): number
-
-
-
-
-
 # 知识点
 
 ### 1，js 的构造方法的实例对象会集成构造方法的 prototype
@@ -57,7 +33,25 @@ function test({sum1, sum2, sum3 = 1, sum4 = 2}) {
 test({sum1:1,sum2:2,sum3:3})
 ```
 
+### 5，JS中的Promise
 
+https://www.cnblogs.com/sweeeper/p/8442613.html
+
+https://blog.csdn.net/qq_37860963/article/details/81539118
+
+
+
+### 4，JS单线程异步实现原理
+
+https://blog.csdn.net/li123128/article/details/80650256
+
+https://www.jianshu.com/p/f478f15c1671
+
+http://www.ruanyifeng.com/blog/2014/10/event-loop.html
+
+### 5，Object.defineProperty() 的使用
+
+https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
 
 
 # JS格式化
@@ -68,7 +62,7 @@ test({sum1:1,sum2:2,sum3:3})
 
 二、npm 全局安装 eslint   sudo npm i -g eslint``
 
-三、vs终端运行eslint --init
+三、vs终端运行 eslint --init 来生成配置文件
 
 四、在vscode的setting中设置
 

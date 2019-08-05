@@ -11,7 +11,7 @@ npm install --save --only=dev webpack
 npm install --save --only=dev webpack-cli
 ```
 
-### 2，配置
+### 2，配置文件
 
 #### 1，无配置
 
@@ -24,7 +24,7 @@ npx webpack
 
 默认配置文件的名字  `webpack.config.js`
 
-```
+```shell
 // 一，直接使用npx webpack会寻找默认名字的配置文件
 npx webpack
 
@@ -61,6 +61,70 @@ module.exports = {
     }
 }
 ```
+
+#### 3，配置文件的分离
+
+[**详细配置**](https://www.jianshu.com/p/485e704b05c0)
+
+- webpack根据开发和生成环境一般可以将配置文件拆分，拆分dev和prod两种环境
+
+```shell
+|- package.json
+  |- /build
+    |- webpack.common.js
+    |- webpack.dev.js
+    |- webpack.prod.js
+```
+
+- 在scripts里修改相应的命令
+
+```js
+"dev": "webpack-dev-server --config build/webpack.dev.js",
+"build": "webpack --config build/webpack.prod.js"
+```
+
+- 使用`webpack-merge`,用以合并通用配置文件与开发环境配置文件
+
+```shell
+# 安装 webpack-merge
+npm install webpack-merge -D
+```
+
+```js
+-----------------------webpack.dev.js-----------------
+const path = require('path');
+const webpack = require('webpack');
+const merge = require('webpack-merge');
+const baseWebpackConfig = require('./webpack.common');
+ 
+module.exports = merge(baseWebpackConfig, {
+  mode: 'development',
+  devServer: {
+    host: '127.0.0.1',
+    port: 80,
+    contentBase: path.join(__dirname, 'dist'),
+    open: false,
+    hot: false,
+    disableHostCheck: true,
+    proxy: {},
+    before () {}
+  },
+  plugins: [
+    // 启用 HMR
+    new webpack.HotModuleReplacementPlugin({})
+  ]
+});
+```
+
+```js
+--------------------webpack.prod.js------------------
+const baseWebpackConfig = require('./webpack.base');
+module.exports = merge(baseWebpackConfig, {
+  mode: 'production'
+});
+```
+
+
 
 ### 3，开启静态服务
 
@@ -165,7 +229,7 @@ body{ background-color: pink }
 3. 安装 css-loader 和 style-loader
 
 ```js
-npm i css-loader style-loader -D -S
+npm i css-loader style-loader -D
 ```
 
 4. 配置 webpack.config.js
@@ -215,7 +279,7 @@ module.exports = {
           "css-loader",
           // 	把less转成css
           // 需要安装 less 和less-loader（less-loader调用）
-          // 		npm i less less-loader -d -s
+          // 		npm i less less-loader -D
           "less-loader"
         ]
       },
@@ -231,9 +295,9 @@ module.exports = {
     	//  cssloader -- 负责解析@import语法
     	"css-loader",
     	// 	把scss转成css
-    	// 需要安装 node-sass和sass-loader（less-loader调用）
-    	// 		npm i sass-loader -D -S
-        //		npm i node-sass -D -S
+    	// 需要安装 node-sass和sass-loader（sass-loader调用）
+    	// 		npm i sass-loader -D
+        //		npm i node-sass -D
     	"sass-loader"
 		]
         }
@@ -460,4 +524,10 @@ import './css/index.scss'
 import 'bootstrap/dist/css/bootstrap.css'
 console.log("index.js");
 ```
+
+
+
+
+
+# 二，Webpack的相关概念
 
