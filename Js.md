@@ -33,25 +33,71 @@ function test({sum1, sum2, sum3 = 1, sum4 = 2}) {
 test({sum1:1,sum2:2,sum3:3})
 ```
 
-### 5，JS中的Promise
+### 4，JS中的Promise
 
-https://www.cnblogs.com/sweeeper/p/8442613.html
+[JS - Promise使用详解](https://www.cnblogs.com/sweeeper/p/8442613.html)
 
-https://blog.csdn.net/qq_37860963/article/details/81539118
+[理解JS Promise](https://blog.csdn.net/qq_37860963/article/details/81539118)
 
+### 5，async / await 的用法
 
+getJSON函数返回一个promise，这个promise成功resolve时会返回一个 JSON 对象。我们只是调用这个函数，打印返回的JSON对象，然后返回"done"。
 
-### 4，JS单线程异步实现原理
+使用Promise是这样的:[·](http://caibaojian.com/asyncawait.html)
 
-https://blog.csdn.net/li123128/article/details/80650256
+```js
+const makeRequest = () =>
+  getJSON()
+    .then(data => {
+      console.log(data)
+      return "done"
+    })
 
-https://www.jianshu.com/p/f478f15c1671
+makeRequest()
+```
 
-http://www.ruanyifeng.com/blog/2014/10/event-loop.html
+使用Async/Await是这样的:
 
-### 5，Object.defineProperty() 的使用
+```js
+//code from http://caibaojian.com/asyncawait.html
+const makeRequest = async () => {
+  console.log(await getJSON())
+  return "done"
+}
 
-https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
+makeRequest()
+```
+
+它们有一些细微不同:
+
+- 函数前面多了一个aync关键字。await关键字只能用在aync定义的函数内。async函数会隐式地返回一个promise，该promise的reosolve值就是函数return的值。(示例中reosolve值就是字符串"done")
+- 第1点暗示我们不能在最外层代码中使用await，因为不在async函数内。
+
+### 6，JS单线程异步实现原理
+
+[什么叫异步](https://blog.csdn.net/li123128/article/details/80650256)
+
+[JS是单线程运行机制](https://www.jianshu.com/p/f478f15c1671)
+
+[Event Loop](http://www.ruanyifeng.com/blog/2014/10/event-loop.html)
+
+### 7，Object.defineProperty() 的使用
+
+[MDN Object.defineProperty()]( https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty)
+
+### 8，对象展开运算符
+
+对象展开运算符用 `...` 来表示，可以对数组和对象进行快速解构
+
+```js
+let a = [1,2,3];
+let b = [0, ...a, 4]; // 等价于[0,1,2,3,4]
+ 
+let obj = { a: 1, b: 2 };
+let obj2 = { ...obj, c: 3 }; // 等价于{ a:1, b:2, c:3 }
+let obj3 = { ...obj, a: 3 }; // 等价于{ a:3, b:2 }
+```
+
 
 
 # JS格式化

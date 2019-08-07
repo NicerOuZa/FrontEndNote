@@ -2,10 +2,6 @@ const http = require('http')
 const fs = require('fs')
 const Url = require('url')
 
-Url.parse('http://localhost:5000/comment?name=zt&id=1')
-Url.parse('http://localhost:5000/comment?name=zt&id=1', true)
-
-
 http
 	.createServer(function (req, res) {
 		res.writeHead(200, {

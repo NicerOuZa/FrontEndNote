@@ -1,34 +1,29 @@
-var p = {
-  a: 12,
-  fun1() {
-    console.log(this.a);
-  },
-  fun2() {
-    console.log("aa");
-  },
-  fun3: function() {
-    console.log(this.a);
-  },
-  fun4: () => {
-    console.log(this.a);
-  }
-};
+const http = require("http");
+const fs = require("fs");
+const Url = require("url");
 
-function Dog() {
-  this.dd = "zt";
-  this.info = {
-    msg: 123,
-    methods: {
-      a: this.dd,
-      fun1() {
-        console.log(this.a);
-      }
+http
+  .createServer(function(req, res) {
+    res.writeHead(200, {
+      "Content-Type": "text/txt;charset=utf-8"
+    });
+    let urlObj = Url.parse(req.url, true);
+    let pathName = urlObj.pathname;
+    if (pathName === "/") {
+      res.end(JSON.stringify({ name: "zt", age: 18 }));
+    } else if (pathName.indexOf("/comment") === 0) {
+      res.end(JSON.stringify({ name: "zt", age: 18 }));
+    } else if (pathName.indexOf("/user") === 0) {
+      res.end(JSON.stringify({ query: urlObj.query }));
+    } else if (pathName.indexOf("/favicon.ico") === 0) {
+      res.end(JSON.stringify({ name: "zt", age: 18 }));
+    } else {
+      fs.readFile("./pages/404.html", function(err, data) {
+        res.end(data);
+      });
     }
-  };
-}
-
-var d = new Dog();
-d.info.methods.fun1();
-
-p.fun3();
-p.fun4();
+  })
+  .listen(5000, function() {
+    console.log("服务器启动成功！");
+    console.log("端口号：5000");
+  });

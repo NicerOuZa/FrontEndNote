@@ -2028,9 +2028,11 @@ active-class
 
 
 
-# 九，Vue发起请求
+# 九，Vue 网络请求
 
 ### 1，[使用vue-resource发起请求](https://github.com/pagekit/vue-resource)
+
+**vue 2.0 后基本不再使用 vue-resource**
 
 ```
  npm i vue-resource -s
@@ -2067,9 +2069,180 @@ var vm = new Vue({
 })
 ```
 
-### 2，JSONP 
+### 2，[Axios](https://www.kancloud.cn/yunye/axios/234845)
+
+**vue 官方推荐使用 Axios 在vue 中进行网络请求**
+
+#### 1).通过向 `axios` 传递相关配置来创建请求
+
+**axios(config)**
+
+```js
+// 发送 POST 请求
+axios({
+  method: 'post',
+  url: '/user/12345',
+  data: {
+    firstName: 'Fred',
+    lastName: 'Flintstone'
+  }
+}).then(res => {
+  console.log(res.data);
+});;
+```
+
+**axios(url[, config])**
+
+```js
+// 发送 GET 请求（默认的方法）
+axios('/user/12345');
+```
+
+#### 2).执行 `GET` 请求
+
+```js
+// 为给定 ID 的 user 创建请求
+axios.get('/user?ID=12345')
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+
+// 可选地，上面的请求可以这样做
+axios.get('/user', {
+    params: {
+      ID: 12345
+    }
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+```
+
+#### 3).执行 `POST` 请求
+
+```js
+axios.post('/user', {
+    firstName: 'Fred',
+    lastName: 'Flintstone'
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+```
+
+#### 4).请求方法的别名
+
+为方便起见，为所有支持的请求方法提供了别名
+
+axios.request(config)
+
+axios.get(url[, config])
+
+axios.delete(url[, config])
+
+axios.head(url[, config])
+
+axios.post(url[, data[, config]])
+
+axios.put(url[, data[, config]])
+
+axios.patch(url[, data[, config]])
+
+在使用别名方法时， `url`、`method`、`data` 这些属性都不必在配置中指定。
+
+```js
+// 使用 axios.post 时，可以传入三个参数，
+/**
+	三个参数：
+		1.请求路径 url
+		2.post的请求数据，即data{}
+        3.为配置对象
+*/
+axios
+  .post("/test3", { name: "mmnn" }, { baseURL: "http://localhost:8080" })
+  .then(res => {
+    console.log(res.data);
+  });
+
+// 对应 axios.get 
+// 		第一个参数为请求地址 url
+//		第二个参数为配置对象（没有第三个参数）
+axios
+  .get("/test3", { params: {id: 123}, baseURL: "http://localhost:8080"})
+  .then(res => {
+    console.log(res.data);
+  });
+
+```
 
 
+
+#### 5).执行多个并发请求
+
+```js
+function getUserAccount() {
+  return axios.get('/user/12345');
+}
+
+function getUserPermissions() {
+  return axios.get('/user/12345/permissions');
+}
+
+axios.all([getUserAccount(), getUserPermissions()])
+  .then(axios.spread(function (acct, perms) {
+    // 两个请求现在都执行完成
+  }));
+```
+
+#### 6).配置的默认值 / defaults
+
+你可以指定将被用在各个请求的配置默认值
+
+全局的 axios 默认值
+
+```js
+axios.defaults.baseURL = 'https://api.example.com';
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+```
+
+```js
+axios.defaults.baseURL = "http://localhost:8080";
+
+// 设置请求根路径 baseURL 后，后面请求直接使用对应的请求地址即可
+axios.get("/test1").then(res => {
+  console.log(res.data)
+});
+```
+
+#### 7).创建 axios 实例
+
+可以使用自定义配置新建一个 axios 实例
+
+一般使用 axios 的默认实例就可以满足要求，但是有时候项目中有多个需要设置的 baseURL 等个性化的默认配置时，就需要多个 axios 来设置多个默认配置，需要哪个默认配置的就调用哪个 axios  对象
+
+**axios.create([config])**
+
+```js
+var instance = axios.create({
+  baseURL: "http://localhost:8080",
+  timeout: 1000,
+  headers: { "X-Custom-Header": "foobar" }
+});
+
+instance.get("/test2").then(res => {
+  console.log(res.data)
+});
+```
 
 
 
@@ -2803,7 +2976,7 @@ export const store = new Vuex.Store({
 })
 ```
 
-把创建的 store 对象放入  Vue 对象中
+通过在根实例中注册 `store` 选项，该 store 实例会注入到根组件下的所有子组件中，且子组件能通过 `this.$store`
 
 ```js
 import { store } from './store/main.store'
@@ -2817,6 +2990,393 @@ new Vue({
   }
 });
 ```
+
+### 2，State
+
+使用`this.$store.state`获取 state 中的属性
+
+```js
+const Counter = {
+  template: `<div>{{ count }}</div>`,
+  computed: {
+    count () {
+      return this.$store.state.count
+    }
+  }
+}
+```
+
+**state 单一状态树**
+
+
+
+### 3，Mutation
+
+更改 Vuex 的 store 中的状态的唯一方法是提交 mutation。Vuex 中的 mutation 非常类似于事件：每个 mutation 都有一个字符串的 **事件类型 (type)** 和 一个 **回调函数 (handler)**。这个回调函数就是我们实际进行状态更改的地方，并且它会接受 state 作为第一个参数：
+
+```js
+const store = new Vuex.Store({
+  state: {
+    count: 1
+  },
+  mutations: {
+    increment (state) {
+      // 变更状态
+      state.count++
+    }
+  }
+})
+```
+
+你不能直接调用一个 mutation handler。这个选项更像是事件注册：“当触发一个类型为 `increment` 的 mutation 时，调用此函数。”要唤醒一个 mutation handler，你需要以相应的 type 调用 **store.commit** 方法：
+
+```js
+store.commit('increment')
+```
+
+**提交载荷（Payload）**
+
+即给 mutation 中的回调函数传入额外参数
+
+你可以向 `store.commit` 传入额外的参数，即 mutation 的 **载荷（payload）**：
+
+```js
+// ...
+mutations: {
+  increment (state, n) {
+    state.count += n
+  }
+}
+```
+
+```js
+methods: {
+  doneTodosCount () {
+      this.$store.commit('increment', 100)
+  }
+}
+```
+
+**对象风格的提交方式**
+
+提交 mutation 的另一种方式是直接使用包含 `type` 属性的对象：
+
+```js
+store.commit({
+  type: 'increment',
+  amount: 10
+})
+```
+
+当使用对象风格的提交方式，整个对象都作为载荷传给 mutation 函数，因此 handler 保持不变：
+
+```js
+mutations: {
+  increment (state, payload) {
+    state.count += payload.amount
+  }
+}
+```
+
+**Mutation 需遵守 Vue 的响应规则**
+
+既然 Vuex 的 store 中的状态是响应式的，那么当我们变更状态时，监视状态的 Vue 组件也会自动更新。这也意味着 Vuex 中的 mutation 也需要与使用 Vue 一样遵守一些注意事项：
+
+1. 最好提前在你的 store 中初始化好所有所需属性。
+2. 当需要在对象上添加新属性时，你应该
+
+- 使用 `Vue.set(obj, 'newProp', 123)`, 
+
+- 或者以新对象替换老对象。例如，利用 stage-3 的[对象展开运算符](https://github.com/sebmarkbage/ecmascript-rest-spread)我们可以这样写：
+
+  ```js
+  state.obj = { ...state.obj, newProp: 123 }
+  ```
+
++ 删除对象上的属性时，应该用`Vue.delete(obj, 'oldProp')`
+
+### 4，Getter
+
+类似 Vue 中的计算属性
+
+Vuex 允许我们在 store 中定义“getter”（可以认为是 store 的计算属性）。就像计算属性一样，getter 的返回值会根据它的依赖被缓存起来，且只有当它的依赖值发生了改变才会被重新计算。
+
+Getter 接受 state 作为其第一个参数：
+
+```js
+const store = new Vuex.Store({
+  state: {
+    todos: [
+      { id: 1, text: '...', done: true },
+      { id: 2, text: '...', done: false }
+    ]
+  },
+  getters: {
+    doneTodos: state => {
+      return state.todos.filter(todo => todo.done)
+    }
+  }
+})
+```
+
+**通过属性访问**
+
+Getter 会暴露为 `store.getters` 对象，你可以以属性的形式访问这些值：
+
+```js
+store.getters.doneTodos // -> [{ id: 1, text: '...', done: true }]
+```
+
+Getter 也可以接受其他 getter 作为第二个参数：
+
+```js
+getters: {
+  // ...
+  doneTodosCount: (state, getters) => {
+    return getters.doneTodos.length
+  }
+}
+store.getters.doneTodosCount // -> 1
+```
+
+我们可以很容易地在任何组件中使用它：
+
+```js
+computed: {
+  doneTodosCount () {
+    return this.$store.getters.doneTodosCount
+  }
+}
+```
+
+**通过方法访问**
+
+你也可以通过让 getter 返回一个函数，来实现给 getter 传参。在你对 store 里的数组进行查询时非常有用。
+
+```js
+getters: {
+  // ...
+  getTodoById: (state) => (id) => {
+    return state.todos.find(todo => todo.id === id)
+  }
+}
+store.getters.getTodoById(2) // -> { id: 2, text: '...', done: false }
+```
+
+### 5，Action
+
+Action 类似于 mutation，不同在于：
+
+- Action 提交的是 mutation，而不是直接变更状态。
+- Action 可以包含任意异步操作。
+
+注册一个简单的 action：
+
+```js
+const store = new Vuex.Store({
+  state: {
+    count: 0
+  },
+  mutations: {
+    increment (state) {
+      state.count++
+    }
+  },
+  actions: {
+    increment (context) {
+      context.commit('increment')
+    }
+  }
+})
+```
+
+Action 函数接受一个与 store 实例具有相同方法和属性的 context 对象，因此你可以调用 `context.commit` 提交一个 mutation，或者通过 `context.state` 和 `context.getters` 来获取 state 和 getters。
+
+使用参数解构来简化代码：
+
+```js
+actions: {
+  increment ({ commit }) {
+    commit('increment')
+  }
+}
+```
+
+**分发 Action**
+
+Action 通过 `store.dispatch` 方法触发：
+
+```js
+store.dispatch('increment')
+// 组件中
+this.$store.dispatch('xxx')
+```
+
+在 action 中可以使用异步操作
+
+```js
+actions: {
+  incrementAsync ({ commit }) {
+    setTimeout(() => {
+      commit('increment')
+    }, 1000)
+  }
+}
+```
+
+Actions 支持同样的载荷方式和对象方式进行分发：
+
+```js
+// 以载荷形式分发
+store.dispatch('incrementAsync', {
+  amount: 10
+})
+
+// 以对象形式分发
+store.dispatch({
+  type: 'incrementAsync',
+  amount: 10
+})
+```
+
+**组合 Action**
+
+Action 通常是异步的，那么如何知道 action 什么时候结束呢？更重要的是，我们如何才能组合多个 action，以处理更加复杂的异步流程？
+
+首先，你需要明白 `store.dispatch` 可以处理被触发的 action 的处理函数返回的 Promise，并且 `store.dispatch` 仍旧返回 Promise：
+
+```js
+actions: {
+  actionA ({ commit }) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        commit('someMutation')
+        resolve()
+      }, 1000)
+    })
+  }
+}
+```
+
+现在你可以：
+
+```js
+store.dispatch('actionA').then(() => {
+  // ...
+})
+```
+
+在另外一个 action 中也可以：
+
+```js
+actions: {
+  // ...
+  actionB ({ dispatch, commit }) {
+    return dispatch('actionA').then(() => {
+      commit('someOtherMutation')
+    })
+  }
+}
+```
+
+最后，如果我们利用 `async / await`，我们可以如下组合 action：
+
+```js
+// 假设 getData() 和 getOtherData() 返回的是 Promise
+
+actions: {
+  async actionA ({ commit }) {
+    commit('gotData', await getData())
+  },
+  async actionB ({ dispatch, commit }) {
+    await dispatch('actionA') // 等待 actionA 完成
+    commit('gotOtherData', await getOtherData())
+  }
+}
+```
+
+### 6，Module
+
+由于使用单一状态树，应用的所有状态会集中到一个比较大的对象。当应用变得非常复杂时，store 对象就有可能变得相当臃肿。
+
+为了解决以上问题，Vuex 允许我们将 store 分割成**模块（module）**。每个模块拥有自己的 state、mutation、action、getter、甚至是嵌套子模块——从上至下进行同样方式的分割：
+
+```js
+const moduleA = {
+  state: { ... },
+  mutations: { ... },
+  actions: { ... },
+  getters: { ... }
+}
+
+const moduleB = {
+  state: { ... },
+  mutations: { ... },
+  actions: { ... }
+}
+
+const store = new Vuex.Store({
+  modules: {
+    a: moduleA,
+    b: moduleB
+  }
+})
+
+store.state.a // -> moduleA 的状态
+store.state.b // -> moduleB 的状态
+```
+
+**模块的局部状态**
+
+对于模块内部的 mutation 和 getter，接收的第一个参数是**模块的局部状态对象**。
+
+```js
+const moduleA = {
+  state: { count: 0 },
+  mutations: {
+    increment (state) {
+      // 这里的 `state` 对象是模块的局部状态
+      state.count++
+    }
+  },
+
+  getters: {
+    doubleCount (state) {
+      return state.count * 2
+    }
+  }
+}
+```
+
+同样，对于模块内部的 action，局部状态通过 `context.state` 暴露出来，根节点状态则为 `context.rootState`：
+
+```js
+const moduleA = {
+  // ...
+  actions: {
+    incrementIfOddOnRootSum ({ state, commit, rootState }) {
+      if ((state.count + rootState.count) % 2 === 1) {
+        commit('increment')
+      }
+    }
+  }
+}
+```
+
+对于模块内部的 getter，根节点状态会作为第三个参数暴露出来：
+
+```js
+const moduleA = {
+  // ...
+  getters: {
+    sumWithRootCount (state, getters, rootState) {
+      return state.count + rootState.count
+    }
+  }
+}
+```
+
+
 
 
 

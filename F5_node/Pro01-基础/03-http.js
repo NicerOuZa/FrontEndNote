@@ -19,6 +19,7 @@ var server = http.createServer()
 //          当客户端请求过来，就会自动触发服务器的 request 请求事件，然后执行第二个参数（即回调函数）
 server.on("request", function () {
     console.log("收到请求")
+    
 })
 
 //4，绑定端口号，启动服务器

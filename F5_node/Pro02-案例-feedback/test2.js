@@ -1,22 +1,19 @@
-function Person(info) {
-  this.id = 000;
-  this.name = "zt";
-  this.a = {
-    name: "aa",
-    next() {
-      console.log(this.name);
-    }
-  };
-  this.info = info;
-  this.create = this.a.next
-}
-var p = new Person({
-    test:{
-        hh(){
-            console.log(this.name);
-        }
-    }
-})
+const axios = require("axios");
+// axios.defaults.baseURL = "http://localhost:8080";
 
+// // 设置 baseURL 后，后面请求直接使用对应接口路径即可
+// axios
+//   .get("/test3", { name: "mmnn" }, { baseURL: "http://localhost:8080" })
+//   .then(res => {
+//     console.log(res.data);
+//   });
 
-console.log(p.create === p.a.next)
+var instance = axios.create({
+  baseURL: "http://localhost:8080",
+  timeout: 1000,
+  headers: { "X-Custom-Header": "foobar" }
+});
+
+instance.get("/test2").then(res => {
+  console.log(res.data)
+});
