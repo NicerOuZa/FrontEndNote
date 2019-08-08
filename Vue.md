@@ -2028,52 +2028,15 @@ active-class
 
 
 
-# 九，Vue 网络请求
 
-### 1，[使用vue-resource发起请求](https://github.com/pagekit/vue-resource)
 
-**vue 2.0 后基本不再使用 vue-resource**
+# 九，[Axios](https://www.kancloud.cn/yunye/axios/234845)
 
-```
- npm i vue-resource -s
-```
-
-**vue实例中使用**
-
-```js
-var vm = new Vue({
-    el: "#app",
-    data () {
-        return {
-
-        }
-    },
-    methods: {
-        getInfo(){
-            // get请求
-            this.$http.get('/someUrl', [config]).then(successCallback, errorCallback);
-            this.$http.get('https://api.apiopen.top/getAllUrl').then((result)=>{
-                // console.log(result)
-                // 通过result.body拿到服务器返回的数据
-                console.log(result.body)
-            })
-            // post请求
-            // 手动发起的post请求没有表单格式，所以有的夫服务器处理不了
-            //      通过 post 方法的第三个参数，设置提交的内容类型为普通表单数据格式
-            // this.$http.post('/someUrl', [body], [config]).then(successCallback, errorCallback);
-            this.$http.post('https://api.apiopen.top/getWangYiNews', {}, {emulateJSON: true}).then((result) => {
-                console.log(result.body)
-            })
-        }
-    }
-})
-```
-
-### 2，[Axios](https://www.kancloud.cn/yunye/axios/234845)
+vue 2.0 后基本不再使用 vue-resource
 
 **vue 官方推荐使用 Axios 在vue 中进行网络请求**
 
-#### 1).通过向 `axios` 传递相关配置来创建请求
+### 1).通过向 `axios` 传递相关配置来创建请求
 
 **axios(config)**
 
@@ -2098,7 +2061,7 @@ axios({
 axios('/user/12345');
 ```
 
-#### 2).执行 `GET` 请求
+### 2).执行 `GET` 请求
 
 ```js
 // 为给定 ID 的 user 创建请求
@@ -2124,7 +2087,7 @@ axios.get('/user', {
   });
 ```
 
-#### 3).执行 `POST` 请求
+### 3).执行 `POST` 请求
 
 ```js
 axios.post('/user', {
@@ -2139,7 +2102,7 @@ axios.post('/user', {
   });
 ```
 
-#### 4).请求方法的别名
+### 4).请求方法的别名
 
 为方便起见，为所有支持的请求方法提供了别名
 
@@ -2186,7 +2149,7 @@ axios
 
 
 
-#### 5).执行多个并发请求
+### 5).执行多个并发请求
 
 ```js
 function getUserAccount() {
@@ -2203,7 +2166,7 @@ axios.all([getUserAccount(), getUserPermissions()])
   }));
 ```
 
-#### 6).配置的默认值 / defaults
+### 6).配置的默认值 / defaults
 
 你可以指定将被用在各个请求的配置默认值
 
@@ -2224,7 +2187,7 @@ axios.get("/test1").then(res => {
 });
 ```
 
-#### 7).创建 axios 实例
+### 7).创建 axios 实例
 
 可以使用自定义配置新建一个 axios 实例
 
@@ -2244,7 +2207,43 @@ instance.get("/test2").then(res => {
 });
 ```
 
+### 8).axios 拦截器
 
+在请求或响应被 `then` 或 `catch` 处理前拦截它们。
+
+```js
+// 添加请求拦截器
+axios.interceptors.request.use(function (config) {
+    // 在发送请求之前做些什么
+    return config;
+  }, function (error) {
+    // 对请求错误做些什么
+    return Promise.reject(error);
+  });
+
+// 添加响应拦截器
+axios.interceptors.response.use(function (response) {
+    // 对响应数据做点什么
+    return response;
+  }, function (error) {
+    // 对响应错误做点什么
+    return Promise.reject(error);
+  });
+```
+
+如果你想在稍后移除拦截器，可以这样：
+
+```js
+var myInterceptor = axios.interceptors.request.use(function () {/*...*/});
+axios.interceptors.request.eject(myInterceptor);
+```
+
+可以为自定义 axios 实例添加拦截器
+
+```js
+var instance = axios.create();
+instance.interceptors.request.use(function () {/*...*/});
+```
 
 # 十，[Vue中的动画](https://vuejs.bootcss.com/v2/guide/transitions.html)
 
