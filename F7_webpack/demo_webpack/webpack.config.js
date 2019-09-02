@@ -14,7 +14,7 @@ module.exports = {
   },
 
   mode: "development",
-  entry: "./src/index.js",
+  entry: "./index.js",
   output: {
     filename: "bundle.[hash:8].js",
     path: path.resolve("./dist")

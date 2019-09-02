@@ -527,6 +527,76 @@ console.log("index.js");
 
 
 
+### 9，配置 ts 的环境
+
+1. 安装 `ts-loader`
+
+    ```shell
+    npm i -D typescript ts-loader
+    ```
+
+2. webpack.config.js 配置文件
+
+    ```js
+    const path = require('path');
+    
+    module.exports = {
+        entry: './src/index.ts',
+        output: {
+            filename: 'bundle.js',
+            path: path.resolve(__dirname, 'dist')
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.tsx?$/,
+                    use: 'ts-loader',
+                    exclude: /node_modules/
+                }
+            ]
+        },
+        resolve: {
+            extensions: ['.tsx', '.ts', '.js']
+        }
+    }
+    ```
+
+3. 添加 tsconfig.json 配置文件（typescript的配置）
+   使用 `tsc --init`来生成 
+
+### 10，文件路径引用问题
+
+配置 webpack.config.js 文件
+
+```js
+module.exports = {
+  resolve: {
+    /**
+      通过给 extensions 添加后缀名，项目中引入文件可以省略后缀名
+      如引入vue组件 ：import Account from "./main/Account.vue";
+      在 extensions 添加了 .vue后就可以省略后缀名，即import Account from "./main/Account";
+    */
+    extensions: [".vue", ".js"],
+    /**
+      下面的 alias 给路径设置别名
+      然后使用 
+		- @src就可以指向到/src/ 
+		- @component指向到/src/component/
+	  使用别名
+	  	import LifeCycle from "@pages/lifecycle/lifecycle"
+		import stateProp from "@pages/stateProp/stateProp"
+		import Home from "@pages/home/home"
+    */
+     alias: {
+          "@src":path.resolve("src"),
+          "@component":path.resolve("src/component"),
+          "@pages":path.resolve("src/pages"),
+          "@utils":path.resolve("src/utils"),
+        },
+  },
+}
+```
+
 
 
 # 二，Webpack的相关概念

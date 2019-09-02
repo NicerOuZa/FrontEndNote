@@ -61,7 +61,8 @@ makeRequest()
 ```js
 //code from http://caibaojian.com/asyncawait.html
 const makeRequest = async () => {
-  console.log(await getJSON())
+  var data = await getJSON()
+  console.log(data)
   return "done"
 }
 
