@@ -2,11 +2,11 @@
 
 ### MVVM与MVC
 
-![MVVM与MVC](img\Snipaste_2019-04-30_16-13-40.png)
+![MVVM与MVC](img/Snipaste_2019-04-30_16-13-40.png)
 
 
 
-![2](img\Snipaste_2019-04-30_16-19-05.png)
+![2](img/Snipaste_2019-04-30_16-19-05.png)
 
 ### 1，vue创建基本构架
 
